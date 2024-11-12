@@ -35,6 +35,9 @@ public class CardStackView : MonoBehaviour, IPointerClickHandler
         if (old != null)
         {
             // this helps avoid unnecessary updates
+            if (_new.Players.Count == 0 || old.Players.Count == 0) return;
+            if (_new.Players.Count <= GetPlayer() || old.Players.Count <= GetPlayer()) return;
+            // if (_new.Players[GetPlayer()].GetZone(zone) == null || old.Players[GetPlayer()].GetZone(zone) == null) return;
             // if (_new.Players[GetPlayer()].GetZone(zone) == old.Players[GetPlayer()].GetZone(zone)) return;
         }
         if (IsSingleStack)
