@@ -11,41 +11,23 @@ public static class Cards
     [Serializable]
     public class Card : Stackable
     {
-        [SyncVar]
         public string Name;
-        [SyncVar]
         public List<string> Types = new();
-        [SyncVar]
         public List<string> Subtypes = new();
-        [SyncVar]
         public List<string> Supertypes = new();
-        [SyncVar]
         public int Power = 0;
-        [SyncVar]
         public int Resistance = 0;
-        [SyncVar]
         public int Cost = 0;
-        [SyncVar]
         public int Damage = 0;
-        [SyncVar]
         public List<Card> Blockers = new();
-        [SyncVar]
         public List<string> StaticAbilities = new();
-        [SyncVar]
         public List<string> TriggeredAbilities = new();
-        [SyncVar]
         public List<string> ActivatedAbilities = new();
-        [SyncVar]
         public int Points = 0;
-        [SyncVar]
         public Zone OnResolutionTargetZone = Zone.Discard;
-        [SyncVar]
         public Zone currentZone;
-        [NonSerialized] public CardView view;
-        [SyncVar]
         public List<Zone> PlayableFrom = new() { Zone.Hand };
-
-        [SyncVar] public int controller;
+        public int controller;
 
         public bool CanBePlayedFrom(Zone zone)
         {

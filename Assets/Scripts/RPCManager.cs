@@ -17,24 +17,24 @@ public class RPCManager : NetworkBehaviour
         }
     }
 
-    [ClientRpc]
+    [Command(requiresAuthority = false)]
     public void RpcSyncMulliganDecision(bool keepHand)
     {
         GameController.instance.getLocalPlayer().KeepHand = keepHand;
         GameController.instance.getLocalPlayer().MulliganDecisionMade = true;
     }
-    [ClientRpc]
+    [Command(requiresAuthority = false)]
     public void RPCSelectCardForBottom(Cards.Card card)
     {
         GameController.instance.getLocalPlayer().SelectCardForBottom(card);
     }
 
-    [ClientRpc]
+    [Command(requiresAuthority = false)]
     public void RpcSyncPriorityPassed()
     {
         GameController.instance.getLocalPlayer().HasPassedPriority = true;
     }
-    [ClientRpc]
+    [Command(requiresAuthority = false)]
     public void RpcAddCardToStack(Cards.Card card)
     {
         GameController.instance.wantsToStack = new StackItem(card); 

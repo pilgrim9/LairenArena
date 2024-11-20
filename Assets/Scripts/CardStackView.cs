@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -18,9 +19,11 @@ public class CardStackView : MonoBehaviour, IPointerClickHandler
     {
         return Player;
     }
+    GameObject cardViewPrefab;
     private void Awake()
     {
         image = GetComponent<Image>();
+        cardViewPrefab = Resources.Load("CardVisual") as GameObject;
     }
 
     private void Start()
@@ -28,9 +31,10 @@ public class CardStackView : MonoBehaviour, IPointerClickHandler
         GameController.instance.GameStateUpdated += UpdateZone;
         Debug.Log("Started CardStackView " + zone + " " + GetPlayer());
     }
-
+    
     void UpdateZone(GameState old, GameState _new)
     {
+        Debug.Log("CardStackView | UpdateZone " + zone + " " + GetPlayer());
         if (_new == null) return;
         if (old != null)
         {
@@ -40,8 +44,39 @@ public class CardStackView : MonoBehaviour, IPointerClickHandler
             // if (_new.Players[GetPlayer()].GetZone(zone) == null || old.Players[GetPlayer()].GetZone(zone) == null) return;
             // if (_new.Players[GetPlayer()].GetZone(zone) == old.Players[GetPlayer()].GetZone(zone)) return;
         }
-        if (IsSingleStack)
+        if (IsSingleStack)  {
+            HandleSingleStackView(_new);
+            return;
+        }
+        List<Cards.Card> cardList = _new.Players[GetPlayer()].GetZone(zone);
+        while (cardList.Count > transform.childCount) NewCardView();
+        for (int i = 0; i < transform.childCount; i++)
         {
+            if (zone == Zone.Hand && name == "EnemyHand")
+            {
+                Debug.Log("something");
+            }
+            Debug.Log("Updating card " + cardList[i]);
+            Cards.Card card = cardList[i];
+            CardView view = transform.GetChild(i).GetComponent<CardView>();
+            view.cardData = card;
+            if (IsHidden) view.Hide(); 
+            else view.Show();
+            
+            if (card.CanBePlayedBy(GetPlayer()) && 
+                card.CanBePlayedFrom(zone) && 
+                _new.Players[GetPlayer()].CanPay(card)) view.isPlayable = true; 
+            
+            if (card.CanActivateAbilities()) view.isPlayable = true;
+        }
+    }
+
+
+    private void NewCardView() {
+        CardView view = Instantiate(cardViewPrefab).GetComponent<CardView>();
+        view.transform.SetParent(transform, false);
+    }
+    private void HandleSingleStackView(GameState _new) {
             if (_new.Players[GetPlayer()].GetZone(zone).Count == 0)
             {
                 image.sprite = null;
@@ -54,29 +89,10 @@ public class CardStackView : MonoBehaviour, IPointerClickHandler
             }
             else if (!IsHidden)
             {
-                image.sprite = _new.Players[GetPlayer()].GetZone(zone)[^1].view.getCardImage();
+                Cards.Card topCard = _new.Players[GetPlayer()].GetZone(zone)[^1];
+                image.sprite = CardImageLoader.instance.GetSprite(topCard.Name);;
                 image.color = Color.white;
             }
-        }
-        foreach (var card in _new.Players[GetPlayer()].GetZone(zone))
-        {
-            if (zone == Zone.Hand && name == "EnemyHand")
-            {
-                Debug.Log("something");
-
-            }
-            Debug.Log("Updating card " + card.view);
-            card.view.transform.SetParent(transform, false);
-            
-            if (IsHidden) card.view.Hide(); 
-            else card.view.Show();
-            
-            if (card.CanBePlayedBy(GetPlayer()) && 
-                card.CanBePlayedFrom(zone) && 
-                _new.Players[GetPlayer()].CanPay(card)) card.view.isPlayable = true; 
-            
-            if (card.CanActivateAbilities()) card.view.isPlayable = true;
-        }
     }
     
 }

@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp.csproj", "{3C024F14-54A7-3E11-4E4C-E5DF2FC3A8FC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mirror.Examples", "Mirror.Examples.csproj", "{477DADBD-A84F-3EC5-20D5-FAB12E621D57}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mirror", "Mirror.csproj", "{96D49537-745C-20F3-7682-9424F9E178BF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Edgegap", "Edgegap.csproj", "{E5B8EF88-C8D1-B436-F6BF-28D979C07B77}"
@@ -37,6 +39,10 @@ Global
 		{3C024F14-54A7-3E11-4E4C-E5DF2FC3A8FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C024F14-54A7-3E11-4E4C-E5DF2FC3A8FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3C024F14-54A7-3E11-4E4C-E5DF2FC3A8FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{477DADBD-A84F-3EC5-20D5-FAB12E621D57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{477DADBD-A84F-3EC5-20D5-FAB12E621D57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{477DADBD-A84F-3EC5-20D5-FAB12E621D57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{477DADBD-A84F-3EC5-20D5-FAB12E621D57}.Release|Any CPU.Build.0 = Release|Any CPU
 		{96D49537-745C-20F3-7682-9424F9E178BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{96D49537-745C-20F3-7682-9424F9E178BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{96D49537-745C-20F3-7682-9424F9E178BF}.Release|Any CPU.ActiveCfg = Release|Any CPU

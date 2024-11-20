@@ -10,40 +10,25 @@ using Card = Cards.Card;
 [Serializable]
 public class Player
 {
-    [SyncVar]
     public List<Card> Kingdom = new List<Card>();
-    [SyncVar]
     public List<Card> Hand = new List<Card>();
-    [SyncVar]
     public List<Card> Reserve = new();
-    [SyncVar]
     public List<Card> Paid = new();
-    [SyncVar]
     public List<Card> Vault = new();
-    [SyncVar]
     public List<Card> Attackers = new();
-    [SyncVar]
     public List<Card> Regroup = new();
-    [SyncVar]
     public List<Card> Discard = new();
-    [SyncVar]
     public List<Card> Avernus = new();
-    [SyncVar]
     public int Life;
-    [SyncVar]
     public bool HasPassedPriority;
-    [SyncVar]
     public StackItem AddToStack;
-    [SyncVar]
     public bool HasAddedToStack;
-    [SyncVar]
     public int AmountToPay;
-    [SyncVar]
     public bool PaymentCanceled;
     public bool CanStackSlowActions()
     {
-        return (GameController.instance.gameState.GetActivePlayer() == this &&
-                new List<Phase> { Phase.MainPhase1, Phase.MainPhase2 }.Contains(GameController.instance.gameState.currentPhase));
+        return GameController.instance.gameState.GetActivePlayer() == this &&
+                new List<Phase> { Phase.MainPhase1, Phase.MainPhase2 }.Contains(GameController.instance.gameState.currentPhase);
     }
     public bool CanStackFastActions()
     {
@@ -64,6 +49,7 @@ public class Player
     public bool AwaitingMulliganDecision { get; set; }
     public bool MulliganDecisionMade { get; set; }
     public bool KeepHand { get; set; }
+    public int mulliganCount { get; set; } = 1;
 
     public bool AwaitingBottomDecision { get; set; }
     public int CardsToBottom { get; set; }

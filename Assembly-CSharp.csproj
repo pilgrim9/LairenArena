@@ -66,23 +66,18 @@
     <Compile Include="Assets\Scripts\GameController.cs" />
     <Compile Include="Assets\Scripts\DontDestroyOnLoad.cs" />
     <Compile Include="Assets\Scripts\CardStackView.cs" />
-    <Compile Include="Assets\Mirror\Examples\Chat\Scripts\LoginUI.cs" />
     <Compile Include="Assets\MirrorPlayer.cs" />
     <Compile Include="Assets\Scripts\CardView.cs" />
     <Compile Include="Assets\Scripts\Phase.cs" />
     <Compile Include="Assets\Scripts\CardTypes.cs" />
     <Compile Include="Assets\Scripts\Abilities.cs" />
     <Compile Include="Assets\Scripts\HandStackView.cs" />
-    <Compile Include="Assets\Mirror\Examples\Chat\Scripts\ChatNetworkManager.cs" />
     <Compile Include="Assets\Scripts\MulliganUI.cs" />
     <Compile Include="Assets\FollowMouse.cs" />
     <Compile Include="Assets\PhaseIndicator.cs" />
-    <Compile Include="Assets\Mirror\Examples\Chat\Scripts\ChatUI.cs" />
     <Compile Include="Assets\Scripts\Player.cs" />
-    <Compile Include="Assets\Mirror\Examples\Chat\Scripts\Player.cs" />
     <Compile Include="Assets\ZoomedCard.cs" />
     <Compile Include="Assets\PlayerBoard.cs" />
-    <Compile Include="Assets\Mirror\Examples\Chat\Scripts\ChatAuthenticator.cs" />
     <Compile Include="Assets\Scripts\CardImageLoader.cs" />
     <Compile Include="Assets\Scripts\FaceUpCardPile.cs" />
     <Compile Include="Assets\Scripts\Stackable.cs" />
@@ -93,6 +88,7 @@
     <Compile Include="Assets\Scripts\GameState.cs" />
     <Compile Include="Assets\Scripts\RPCManager.cs" />
     <Compile Include="Assets\PushUpOnHover.cs" />
+    <Compile Include="Assets\CustomNetworkManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Mirror\Plugins\Mono.Cecil\Mono.CecilX.dll" />
@@ -1036,6 +1032,10 @@
       <HintPath>Library\ScriptAssemblies\Unity.Timeline.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="ParrelSync">
+      <HintPath>Library\ScriptAssemblies\ParrelSync.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Unity.TestTools.CodeCoverage.Editor.OpenCover.Mono.Reflection">
       <HintPath>Library\ScriptAssemblies\Unity.TestTools.CodeCoverage.Editor.OpenCover.Mono.Reflection.dll</HintPath>
       <Private>False</Private>
@@ -1087,6 +1087,7 @@
     <ProjectReference Include="SimpleWebTransport.csproj" />
     <ProjectReference Include="Mirror.CompilerSymbols.csproj" />
     <ProjectReference Include="Mirror.Authenticators.csproj" />
+    <ProjectReference Include="Mirror.Examples.csproj" />
     <ProjectReference Include="Edgegap.csproj" />
     <ProjectReference Include="kcp2k.csproj" />
   </ItemGroup>

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Mirror;
 using StackObjects;
-using Telepathy;
 using UnityEngine;
 using Random = System.Random;
 using Card = Cards.Card;
@@ -21,8 +20,28 @@ public class GameController : NetworkBehaviour
     }
     public bool firstTurn = true;
     
-    [SyncVar(hook =nameof(OnGameStateUpdated))]
-    public GameState gameState;
+    [SyncVar(hook=nameof(OnGameStateUpdated))]
+    private string serializedGameState;  // We'll use this to sync the full state
+
+    public GameState gameState = new GameState();
+
+    // Method to update the game state
+    [Server]
+    private void UpdateGameState()
+    {
+        serializedGameState = JsonUtility.ToJson(gameState);
+    }
+
+    // Hook that runs when serializedGameState changes
+    private void OnGameStateUpdated(string oldState, string newState)
+    {
+        Debug.Log($"GameController | OnGameStateUpdated {oldState==newState}");
+        if (!string.IsNullOrEmpty(newState) && oldState != newState)
+        {
+            gameState = JsonUtility.FromJson<GameState>(newState);
+            GameStateUpdated?.Invoke(JsonUtility.FromJson<GameState>(oldState), gameState);
+        }
+    }
 
     public event Action<GameState, GameState> GameStateUpdated;
 
@@ -34,34 +53,59 @@ public class GameController : NetworkBehaviour
     {
         return gameState.Players[isServer ? 0 : 1];
     }
-    void OnGameStateUpdated(GameState oldValue, GameState newValue)
-    {
-        GameStateUpdated?.Invoke(oldValue, newValue);
-    }
     private Coroutine gameLoop;
 
+    public CustomNetworkManager networkManager;
     public override void OnStartServer()
     {
         base.OnStartServer();
-        if (isServer) StartCoroutine(SetupGame());
+        networkManager = (CustomNetworkManager)NetworkManager.singleton;
+        Debug.Log("GameController | OnStartServer");
+        networkManager.OnClientConnectAction += OnClientConnect;
+    }
+
+    public void OnClientConnect() {
+        if (!isServer) {
+            Debug.Log("GameController | OnClientConnect ignored - not server");
+            return;
+        }
+        
+        Debug.Log($"GameController | OnClientConnect - Current players: {NetworkManager.singleton.numPlayers}");
+        
+        if (NetworkManager.singleton.numPlayers < 1 || NetworkManager.singleton.numPlayers > 1) {
+            Debug.Log("GameController | Waiting for more players to connect...");
+            return;
+        }
+        
+        Debug.Log("GameController | Starting game setup with 2 players");
+        StartCoroutine(SetupGame());
     }
 
     public bool WaitingForResponse { get; private set; }
 
     private IEnumerator SetupGame()
     {
+        Debug.Log("GameController | Beginning SetupGame");
         gameState = new GameState();
         gameState.Players.Add(new Player());
         gameState.Players.Add(new Player());
         
+        Debug.Log("GameController | Setting up decks for players");
         gameState.Players[0].Kingdom = GetDeck(0);
         gameState.Players[1].Kingdom = GetDeck(1);
 
+        Debug.Log("GameController | Setting up vaults for players");
         gameState.Players[0].Vault = GetVault(0);
         gameState.Players[1].Vault = GetVault(1);
-        LocalSetDirty();
+        
+        ServerSetDirty();
         DetermineStartingPlayer();
+        Debug.Log($"GameController | Starting player determined: Player {gameState.startingPlayer}");
+        
+        Debug.Log("GameController | Beginning mulligan phase");
         yield return HandleMulligans();
+        
+        Debug.Log("GameController | Starting main game loop");
         gameLoop = StartCoroutine(GameLoop());
     }
 
@@ -71,19 +115,10 @@ public class GameController : NetworkBehaviour
         for (int i = 0; i < 45; i++)
         {
             Card newCard = Cards.ROJO_FUGAZ.Clone(); 
-            GameObject CardView = Instantiate(CardViewPrefab);
             newCard.Owner = playerId;
-            BindView(newCard, CardView.GetComponent<CardView>());
-            NetworkServer.Spawn(CardView);
             deck.Add(newCard);
         }
         return deck;
-    }
-
-    public void BindView(Card card, CardView view)
-    {
-        card.view = view;
-        view.cardData = card;        
     }
     public List<Card> GetVault(int playerid)
     {
@@ -91,10 +126,7 @@ public class GameController : NetworkBehaviour
         for (int i = 0; i < 45; i++)
         {
             Card newCard = Cards.TreasureGenerico.Clone(); 
-            GameObject CardView = Instantiate(CardViewPrefab);
             newCard.Owner = playerid;
-            BindView(newCard, CardView.GetComponent<CardView>());
-            NetworkServer.Spawn(CardView);
             deck.Add(newCard);
         }
         return deck;
@@ -107,9 +139,6 @@ public class GameController : NetworkBehaviour
     }
 
     # region Mulligan
-    private Dictionary<Player, int> mulliganCount = new();
-    private Dictionary<Player, bool> keepHand = new();
-    
     // Add this before your main game loop
     private IEnumerator HandleMulligans()
     {
@@ -117,11 +146,12 @@ public class GameController : NetworkBehaviour
         // Initialize mulligan tracking for each player
         foreach (Player player in gameState.Players)
         {
-            mulliganCount[player] = 1; // starts in 1 so we have to put 1 at the bottom.
-            keepHand[player] = false;
+            player.mulliganCount = 1; // starts in 1 so we have to put 1 at the bottom.
+            player.KeepHand = false;
             
             // Initial draw of 7 cards
             DrawCards(player, 7);
+            ServerSetDirty();
         }
 
         bool allPlayersKept = false;
@@ -131,16 +161,16 @@ public class GameController : NetworkBehaviour
             // Reset decision tracking for this round
             foreach (Player player in gameState.Players)
             {
-                if (!keepHand[player])
+                if (!player.KeepHand)
                 {
-                    keepHand[player] = false;
+                    player.KeepHand = false;
                 }
             }
 
             // Wait for all players to make their mulligan decision
             foreach (Player player in gameState.Players)
             {
-                if (!keepHand[player])
+                if (!player.KeepHand)
                 {
                     // Set the active player so UI can show the correct hand
                     gameState.ActivePlayer = gameState.Players.IndexOf(player);
@@ -148,7 +178,7 @@ public class GameController : NetworkBehaviour
                     // Wait for the player's decision
                     yield return StartCoroutine(AwaitMulliganDecision(player));
 
-                    if (!keepHand[player])
+                    if (!player.KeepHand)
                     {
                         yield return StartCoroutine(PerformMulligan(player));
                     }
@@ -156,15 +186,15 @@ public class GameController : NetworkBehaviour
             }
 
             // Check if all players have kept their hands
-            allPlayersKept = gameState.Players.All(p => keepHand[p]);
+            allPlayersKept = gameState.Players.All(p => p.KeepHand);
         }
 
         // After all players keep, handle bottom of library cards
         foreach (Player player in gameState.Players)
         {
-            if (mulliganCount[player] > 0)
+            if (player.mulliganCount > 0)
             {
-                yield return StartCoroutine(AwaitBottomCards(player, mulliganCount[player]));
+                yield return StartCoroutine(AwaitBottomCards(player, player.mulliganCount));
             }
         }
     }
@@ -176,15 +206,16 @@ public class GameController : NetworkBehaviour
         Debug.Log("Waiting for " + player + " to make a mulligan decision.");
         // Wait until the player makes a decision
         yield return new WaitUntil(() => player.MulliganDecisionMade);
-        
+
         player.AwaitingMulliganDecision = false;
         player.MulliganDecisionMade = false;
+        ServerSetDirty();
     }
 
     private IEnumerator PerformMulligan(Player player)
     {
         // Increment mulligan count
-        mulliganCount[player]++;
+        player.mulliganCount++;
         
         // Return cards to library
         MoveAll(player.Hand, player.Kingdom);
@@ -196,6 +227,7 @@ public class GameController : NetworkBehaviour
         DrawCards(player, 7);
         
         yield return null;
+        ServerSetDirty();
     }
 
     private IEnumerator AwaitBottomCards(Player player, int cardsToBottom)
@@ -213,9 +245,10 @@ public class GameController : NetworkBehaviour
             MoveCard(player.SelectedCardForBottom, player.Hand, player.Kingdom);
             player.CardsToBottom--;
             player.SelectedCardForBottom = null;
+            ServerSetDirty();
         }
-        
         player.AwaitingBottomDecision = false;
+        ServerSetDirty();
     }
 
     # endregion
@@ -348,6 +381,7 @@ public class GameController : NetworkBehaviour
 
     private IEnumerator AwaitPriority()
     {
+        ServerSetDirty();
         ResetPriorityPassed();
         yield return HandlePriority();
     }
@@ -378,7 +412,6 @@ public class GameController : NetworkBehaviour
 
     private void DrawCard(Player player)
     {
-
         if (player.Kingdom.Count == 0)
         {
             Lose(player);
@@ -386,7 +419,6 @@ public class GameController : NetworkBehaviour
 
         player.Hand.Add(player.Kingdom[0]);
         player.Kingdom.RemoveAt(0);
-        LocalSetDirty();
     }
 
     private void Lose(Player player)
@@ -399,7 +431,7 @@ public class GameController : NetworkBehaviour
     {
         to.AddRange(from);
         from.Clear();
-        LocalSetDirty();
+        ServerSetDirty();
     }
     
     
@@ -408,7 +440,7 @@ public class GameController : NetworkBehaviour
     {
         from.Remove(card);
         to.Add(card);
-        LocalSetDirty();
+        ServerSetDirty();
     }
     
 
@@ -431,7 +463,7 @@ public class GameController : NetworkBehaviour
                 }
             }
         }
-        LocalSetDirty();
+        ServerSetDirty();
     }
 
     private void Untap()
@@ -486,6 +518,7 @@ public class GameController : NetworkBehaviour
     {
         Debug.Log("Waiting for " + gameState.GetActivePlayer() + " to declare attackers.");
         yield return new WaitUntil(() => declaredAttackers);
+        ServerSetDirty();
     }
 
     public bool declaredBlockers;
@@ -493,6 +526,7 @@ public class GameController : NetworkBehaviour
     {
         Debug.Log("Waiting for " + gameState.Players[gameState.ActivePlayer - 1] + " to declare blockers.");
         yield return new WaitUntil(() => declaredBlockers);
+        ServerSetDirty();
     }
     
     private void Damage()
@@ -512,6 +546,7 @@ public class GameController : NetworkBehaviour
         {
             Debug.Log("Waiting for " + gameState.GetActivePlayer() + " to discard a card.");
             yield return new WaitUntil(() => cardToDiscard!= null);
+            ServerSetDirty();
             MoveCard(cardToDiscard, gameState.GetActivePlayer().Hand, gameState.GetActivePlayer().Discard);
             cardToDiscard = null;
         }
@@ -578,13 +613,10 @@ public class GameController : NetworkBehaviour
         if (_new == null) return;
         if (isServer) AddToStack(gameState.GetActivePlayer(), _new.getItem());
     }
-
-    private void LocalSetDirty()
+    [Server]
+    private void ServerSetDirty()
     {
         SetDirty();
-        GameStateUpdated?.Invoke(previousGameState,gameState);
-        if (isServer) previousGameState = gameState.Clone();
-
+        UpdateGameState();
     }
-    public GameState previousGameState;
 }

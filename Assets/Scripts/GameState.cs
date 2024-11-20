@@ -7,17 +7,12 @@ using Unity.VisualScripting;
 [Serializable]
 public class GameState
 {
-    [SyncVar]
     public List<Player> Players = new();
     public int Turn;
-    [SyncVar]
     public int ActivePlayer;
 
-    [SyncVar]
     public List<StackItem> TheStack = new();
-    [SyncVar]
     public int playerWithPriority;
-    [SyncVar]
     public Phase currentPhase;
     public bool firstTurn;
     public int startingPlayer;

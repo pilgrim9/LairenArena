@@ -1782,6 +1782,7 @@ MonoBehaviour:
     currentPhase: 0
     firstTurn: 0
     startingPlayer: 0
+  networkManager: {fileID: 0}
   declaredAttackers: 0
   declaredBlockers: 0
   cardToDiscard:
@@ -1838,15 +1839,6 @@ MonoBehaviour:
       Owner: 0
       Caster: 0
       PlayableFrom: 0500000006000000
-  previousGameState:
-    Players: []
-    Turn: 0
-    ActivePlayer: 0
-    TheStack: []
-    playerWithPriority: 0
-    currentPhase: 0
-    firstTurn: 0
-    startingPlayer: 0
 --- !u!4 &1454864512
 Transform:
   m_ObjectHideFlags: 0
@@ -2369,9 +2361,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1898985932}
-  - component: {fileID: 1898985934}
-  - component: {fileID: 1898985933}
+  - component: {fileID: 1898985936}
   - component: {fileID: 1898985935}
+  - component: {fileID: 1898985937}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -2388,13 +2380,13 @@ Transform:
   m_GameObject: {fileID: 1898985931}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 760.7319, y: 688.0521, z: -4.4430227}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1898985933
+--- !u!114 &1898985935
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2403,12 +2395,27 @@ MonoBehaviour:
   m_GameObject: {fileID: 1898985931}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6442dc8070ceb41f094e44de0bf87274, type: 3}
+  m_Script: {fileID: 11500000, guid: 6b0fecffa3f624585964b0d0eb21b18e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offsetX: 0
-  offsetY: 0
---- !u!114 &1898985934
+  port: 7777
+  DualMode: 1
+  NoDelay: 1
+  Interval: 10
+  Timeout: 10000
+  RecvBufferSize: 7361536
+  SendBufferSize: 7361536
+  FastResend: 2
+  ReceiveWindowSize: 4096
+  SendWindowSize: 4096
+  MaxRetransmit: 40
+  MaximizeSocketBuffers: 1
+  ReliableMaxMessageSize: 297433
+  UnreliableMaxMessageSize: 1194
+  debugLog: 0
+  statisticsGUI: 0
+  statisticsLog: 0
+--- !u!114 &1898985936
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2417,7 +2424,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1898985931}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8aab4c8111b7c411b9b92cf3dbc5bd4e, type: 3}
+  m_Script: {fileID: 11500000, guid: 0ae56491fa98d114abc735d1a00bf83a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   dontDestroyOnLoad: 1
@@ -2437,7 +2444,8 @@ MonoBehaviour:
   playerPrefab: {fileID: 2704761530888729007, guid: ed4c9b858c9227f4c8a38f57abe765b7, type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 0
-  spawnPrefabs: []
+  spawnPrefabs:
+  - {fileID: 8975149112485958180, guid: 3af9175f0036f5f45986279fa6ae1d28, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2
@@ -2453,7 +2461,7 @@ MonoBehaviour:
   evaluationMethod: 0
   evaluationInterval: 3
   timeInterpolationGui: 0
---- !u!114 &1898985935
+--- !u!114 &1898985937
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2462,32 +2470,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1898985931}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c2d1e0e17f753449798fa27474d6b86b, type: 3}
+  m_Script: {fileID: 11500000, guid: 6442dc8070ceb41f094e44de0bf87274, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  port: 7777
-  DualMode: 1
-  NoDelay: 1
-  Interval: 10
-  Timeout: 10000
-  RecvBufferSize: 7361536
-  SendBufferSize: 7361536
-  FastResend: 2
-  ReceiveWindowSize: 4096
-  SendWindowSize: 4096
-  MaxRetransmit: 40
-  MaximizeSocketBuffers: 1
-  ReliableMaxMessageSize: 294131
-  UnreliableMaxMessageSize: 1181
-  debugLog: 0
-  statisticsGUI: 0
-  statisticsLog: 0
-  relayAddress: 127.0.0.1
-  relayGameServerPort: 8888
-  relayGameClientPort: 9999
-  relayGUI: 1
-  userId: 11111111
-  sessionId: 22222222
+  offsetX: 0
+  offsetY: 0
 --- !u!1 &1959615344
 GameObject:
   m_ObjectHideFlags: 0
