@@ -5,20 +5,21 @@ using Mirror;
 using StackObjects;
 using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
+using System.Linq;
 using Card = Cards.Card;
 
 [Serializable]
 public class Player
 {
-    public List<Card> Kingdom = new List<Card>();
-    public List<Card> Hand = new List<Card>();
-    public List<Card> Reserve = new();
-    public List<Card> Paid = new();
-    public List<Card> Vault = new();
-    public List<Card> Attackers = new();
-    public List<Card> Regroup = new();
-    public List<Card> Discard = new();
-    public List<Card> Avernus = new();
+    public List<int> Hand = new();
+    public List<int> Kingdom = new();
+    public List<int> Reserve = new();
+    public List<int> Paid = new();
+    public List<int> Vault = new();
+    public List<int> Attackers = new();
+    public List<int> Regroup = new();
+    public List<int> Discard = new();
+    public List<int> Avernus = new();
     public int Life;
     public bool HasPassedPriority;
     public StackItem AddToStack;
@@ -46,14 +47,14 @@ public class Player
         yield return new WaitUntil(() => AmountToPay == 0 || PaymentCanceled);
     }
     // Add these new fields to your Player class
-    public bool AwaitingMulliganDecision { get; set; }
-    public bool MulliganDecisionMade { get; set; }
-    public bool KeepHand { get; set; }
-    public int mulliganCount { get; set; } = 1;
+    public bool AwaitingMulliganDecision;
+    public bool MulliganDecisionMade;
+    public bool KeepHand;
+    public int mulliganCount = 1;
 
-    public bool AwaitingBottomDecision { get; set; }
-    public int CardsToBottom { get; set; }
-    public Card SelectedCardForBottom { get; set; }
+    public bool AwaitingBottomDecision;
+    public int CardsToBottom; 
+    public int SelectedCardIdForBottom = -1;
 
     // Methods for handling mulligan decisions
     public void DecideToKeep()
@@ -68,15 +69,30 @@ public class Player
         MulliganDecisionMade = true;
     }
 
-    public void SelectCardForBottom(Card card)
+    public void SelectCardForBottom(int cardId)
     {
-        if (AwaitingBottomDecision && Hand.Contains(card))
+        Debug.Log($"Player attempted to select a card for bottom | AwaitingBottomDecision={AwaitingBottomDecision} | Hand.Contains(card)={Hand.Contains(cardId)}");
+        if (AwaitingBottomDecision && Hand.Contains(cardId))
         {
-            SelectedCardForBottom = card;
+            SelectedCardIdForBottom = cardId;
         }
     }
 
-    public List<Card> GetZone(Zone zone)
+    public void ShuffleLibrary()
+    {
+        var rng = new System.Random();
+        Kingdom = Kingdom.OrderBy(x => rng.Next()).ToList();
+    }
+
+    public Card getTopCardFrom(Zone zone) {
+        return Cards.getCardFromID(GetZone(zone)[0]);
+    }    
+    public Card getBottomCardFrom(Zone zone) {
+        return Cards.getCardFromID(GetZone(zone)[^1]);
+        
+    }
+
+    public List<int> GetZone(Zone zone)
     {
         switch (zone)
         {

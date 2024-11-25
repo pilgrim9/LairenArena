@@ -13,6 +13,7 @@ namespace StackObjects
     [Serializable]
     public abstract class Stackable
     {
+        public string Name;
         public string speed = Speed.SLOW;
 
         [NonSerialized] public List<Abilities.ResolutionEffect> ResolutionEffects = new();
@@ -29,12 +30,9 @@ namespace StackObjects
     [Serializable]
     public class StackItem
     {
-        
-        [SyncVar]
+        public int InGameId = -1;
         public Cards.Card card;
-        [SyncVar]
         public Abilities.TriggeredAbility TriggeredAbility;
-        [SyncVar]
         public Abilities.ActivatedAbility ActivatedAbility;
 
         public Stackable getItem()
@@ -43,8 +41,8 @@ namespace StackObjects
             if (TriggeredAbility != null) return TriggeredAbility;
             return ActivatedAbility;
         }
-        public StackItem() { }
 
+        public StackItem () {}
         public StackItem(Stackable StackThis)
         {
             if (StackThis.GetType() == typeof(Abilities.TriggeredAbility)) TriggeredAbility = (Abilities.TriggeredAbility)StackThis;

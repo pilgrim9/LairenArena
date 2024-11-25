@@ -34,7 +34,7 @@ public class CardStackView : MonoBehaviour, IPointerClickHandler
     
     void UpdateZone(GameState old, GameState _new)
     {
-        Debug.Log("CardStackView | UpdateZone " + zone + " " + GetPlayer());
+
         if (_new == null) return;
         if (old != null)
         {
@@ -48,17 +48,17 @@ public class CardStackView : MonoBehaviour, IPointerClickHandler
             HandleSingleStackView(_new);
             return;
         }
-        List<Cards.Card> cardList = _new.Players[GetPlayer()].GetZone(zone);
+        List<int> cardList = _new.Players[GetPlayer()].GetZone(zone);
         while (cardList.Count > transform.childCount) NewCardView();
         for (int i = 0; i < transform.childCount; i++)
         {
-            if (zone == Zone.Hand && name == "EnemyHand")
-            {
-                Debug.Log("something");
-            }
-            Debug.Log("Updating card " + cardList[i]);
-            Cards.Card card = cardList[i];
+            
             CardView view = transform.GetChild(i).GetComponent<CardView>();
+            if (i >= cardList.Count) {
+                view.Hide();
+                continue;
+            }
+            Cards.Card card = Cards.getCardFromID(cardList[i]);
             view.cardData = card;
             if (IsHidden) view.Hide(); 
             else view.Show();
@@ -77,22 +77,22 @@ public class CardStackView : MonoBehaviour, IPointerClickHandler
         view.transform.SetParent(transform, false);
     }
     private void HandleSingleStackView(GameState _new) {
-            if (_new.Players[GetPlayer()].GetZone(zone).Count == 0)
-            {
-                image.sprite = null;
-                image.color = Color.clear;
-            }
-            else if (IsHidden)
-            {
-                image.sprite = CardImageLoader.instance.GetSprite("CardBack");
-                image.color = Color.white;
-            }
-            else if (!IsHidden)
-            {
-                Cards.Card topCard = _new.Players[GetPlayer()].GetZone(zone)[^1];
-                image.sprite = CardImageLoader.instance.GetSprite(topCard.Name);;
-                image.color = Color.white;
-            }
+        if (_new.Players[GetPlayer()].GetZone(zone).Count == 0)
+        {
+            image.sprite = null;
+            image.color = Color.clear;
+        }
+        else if (IsHidden)
+        {
+            image.sprite = CardImageLoader.instance.GetSprite("CardBack");
+            image.color = Color.white;
+        }
+        else if (!IsHidden)
+        {
+            Cards.Card topCard = _new.Players[GetPlayer()].getTopCardFrom(zone);
+            image.sprite = CardImageLoader.instance.GetSprite(topCard.Name);;
+            image.color = Color.white;
+        }
     }
     
 }

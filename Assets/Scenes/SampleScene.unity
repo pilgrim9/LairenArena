@@ -245,7 +245,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 960, y: 16}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 1888, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &336082257
@@ -1727,7 +1727,7 @@ Transform:
   m_GameObject: {fileID: 978783941}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1621.2515, y: 133.25972, z: -1.6359761}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1771,6 +1771,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0.1
+  cards: []
   CardViewPrefab: {fileID: 8975149112485958180, guid: 3af9175f0036f5f45986279fa6ae1d28, type: 3}
   firstTurn: 1
   gameState:
@@ -1785,41 +1786,23 @@ MonoBehaviour:
   networkManager: {fileID: 0}
   declaredAttackers: 0
   declaredBlockers: 0
-  cardToDiscard:
-    speed: Lenta
-    Owner: 0
-    Caster: 0
-    Name: 
-    Types: []
-    Subtypes: []
-    Supertypes: []
-    Power: 0
-    Resistance: 0
-    Cost: 0
-    Damage: 0
-    Blockers: []
-    StaticAbilities: []
-    TriggeredAbilities: []
-    ActivatedAbilities: []
-    Points: 0
-    OnResolutionTargetZone: 7
-    currentZone: 0
-    PlayableFrom: 01000000
-    controller: 0
+  cardToDiscard: -1
   wantsToStack:
+    InGameId: -1
     card:
+      Name: 
       speed: Lenta
       Owner: 0
       Caster: 0
-      Name: 
       Types: []
       Subtypes: []
       Supertypes: []
+      InGameId: 0
       Power: 0
       Resistance: 0
       Cost: 0
       Damage: 0
-      Blockers: []
+      Blockers: 
       StaticAbilities: []
       TriggeredAbilities: []
       ActivatedAbilities: []
@@ -1829,12 +1812,14 @@ MonoBehaviour:
       PlayableFrom: 01000000
       controller: 0
     TriggeredAbility:
+      Name: 
       speed: Lenta
       Owner: 0
       Caster: 0
       Triggers: 
       OncePerTurn: 0
     ActivatedAbility:
+      Name: 
       speed: Lenta
       Owner: 0
       Caster: 0
@@ -1848,7 +1833,7 @@ Transform:
   m_GameObject: {fileID: 1454864510}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 965.03467, y: 473.15186, z: -0.6409606}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2102,6 +2087,18 @@ PrefabInstance:
     - target: {fileID: 522175231110559026, guid: 4b4b999a824fd9f40bfcd7e85af2ea1b, type: 3}
       propertyPath: m_Name
       value: Button (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 606997102365204967, guid: 4b4b999a824fd9f40bfcd7e85af2ea1b, type: 3}
+      propertyPath: m_Color.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 606997102365204967, guid: 4b4b999a824fd9f40bfcd7e85af2ea1b, type: 3}
+      propertyPath: m_Color.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 606997102365204967, guid: 4b4b999a824fd9f40bfcd7e85af2ea1b, type: 3}
+      propertyPath: m_Color.r
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1733765093426569914, guid: 4b4b999a824fd9f40bfcd7e85af2ea1b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName

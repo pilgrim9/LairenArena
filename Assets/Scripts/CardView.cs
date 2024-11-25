@@ -45,14 +45,30 @@ public class CardView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (isHidden) return;
-        RPCManager.instance.RPCSelectCardForBottom(cardData);
-        if (!isPlayable) return;
+        if (isHidden)
+        {
+            Debug.Log($"Card {cardData.Name} is hidden, ignoring click");
+            return;
+        }
+
+        Debug.Log($"Selected card {cardData.Name} for bottom of deck functionality");
+        RPCManager.instance.RPCSelectCardForBottom(cardData.InGameId, GameController.instance.GetLocalPlayerId());
+
+        if (!isPlayable)
+        {
+            Debug.Log($"Card {cardData.Name} is not playable, ignoring play attempt");
+            return;
+        }
+
         if (cardData.currentZone == Zone.Hand)
         {
+            Debug.Log($"Attempting to play card {cardData.Name} from hand to stack");
             RPCManager.instance.RpcAddCardToStack(cardData);
         }
-        // Else check for activated abilities that can be activated from the card's current zone.
+        else
+        {
+            Debug.Log($"Card {cardData.Name} is in {cardData.currentZone} zone, checking for activated abilities");
+        }
     }
     
  

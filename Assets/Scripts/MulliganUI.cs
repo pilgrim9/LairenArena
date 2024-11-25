@@ -52,7 +52,7 @@ public class MulliganUI : MonoBehaviour
         // If we're selecting cards to put on bottom
         if (GameController.instance.gameState.GetActivePlayer().AwaitingBottomDecision)
         {
-            GameController.instance.gameState.GetActivePlayer().SelectCardForBottom(card);
+            GameController.instance.gameState.GetActivePlayer().SelectCardForBottom(card.InGameId);
         }
     }
 

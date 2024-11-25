@@ -7,11 +7,14 @@ using StackObjects;
 using UnityEngine;
 using Random = System.Random;
 using Card = Cards.Card;
+using kcp2k;
+using Edgegap.Editor.Api.Models.Results;
 
 
 public class GameController : NetworkBehaviour
 {
     public static GameController instance;
+    public List<Card> cards = new();
 
     [SerializeField] public GameObject CardViewPrefab;
     private void Awake()
@@ -38,7 +41,7 @@ public class GameController : NetworkBehaviour
         Debug.Log($"GameController | OnGameStateUpdated {oldState==newState}");
         if (!string.IsNullOrEmpty(newState) && oldState != newState)
         {
-            gameState = JsonUtility.FromJson<GameState>(newState);
+            if (!isServer) gameState = JsonUtility.FromJson<GameState>(newState);
             GameStateUpdated?.Invoke(JsonUtility.FromJson<GameState>(oldState), gameState);
         }
     }
@@ -47,11 +50,20 @@ public class GameController : NetworkBehaviour
 
     public int GetLocalPlayerId()
     {
-        return isServer ? 0 : 1;
+        if (isServer) // Host
+            return 0;
+        if (!isServer) // Client only
+            return 1;
+            
+        Debug.LogError("GetLocalPlayerId called on invalid instance (server-only?)");
+        return -1;
     }
     public Player getLocalPlayer()
     {
-        return gameState.Players[isServer ? 0 : 1];
+        return gameState.Players[GetLocalPlayerId()];
+    }
+    public Player getRemotePlayer() {
+        return gameState.Players[1];
     }
     private Coroutine gameLoop;
 
@@ -87,51 +99,55 @@ public class GameController : NetworkBehaviour
     {
         Debug.Log("GameController | Beginning SetupGame");
         gameState = new GameState();
-        gameState.Players.Add(new Player());
-        gameState.Players.Add(new Player());
+        gameState.Players = new List<Player>();  // Make sure this is initialized as a List
         
-        Debug.Log("GameController | Setting up decks for players");
-        gameState.Players[0].Kingdom = GetDeck(0);
-        gameState.Players[1].Kingdom = GetDeck(1);
+        // Initialize both players
+        for (int i = 0; i < 2; i++)
+        {
+            Player player = new Player
+            {
+                Hand = new(),
+                Kingdom = GetDeck(i),
+                Vault = GetVault(i)
+            };
+            gameState.Players.Add(player);
+            Debug.Log($"Initialized player {i} with deck size: {player.Kingdom.Count}");
+        }
 
-        Debug.Log("GameController | Setting up vaults for players");
-        gameState.Players[0].Vault = GetVault(0);
-        gameState.Players[1].Vault = GetVault(1);
-        
-        ServerSetDirty();
+        yield return ServerSetDirty();
         DetermineStartingPlayer();
-        Debug.Log($"GameController | Starting player determined: Player {gameState.startingPlayer}");
         
-        Debug.Log("GameController | Beginning mulligan phase");
         yield return HandleMulligans();
-        
-        Debug.Log("GameController | Starting main game loop");
         gameLoop = StartCoroutine(GameLoop());
     }
 
-    public List<Card> GetDeck(int playerId)
+    public List<int> GetDeck(int playerId)
     {
-        List<Card> deck = new List<Card>();
-        for (int i = 0; i < 45; i++)
+        List<int> deck = new List<int>();
+        for (int i = 0; i < 45+playerId; i++)
         {
-            Card newCard = Cards.ROJO_FUGAZ.Clone(); 
-            newCard.Owner = playerId;
-            deck.Add(newCard);
+
+            deck.Add(NewCard(Cards.ROJO_FUGAZ, playerId).InGameId);
         }
         return deck;
     }
-    public List<Card> GetVault(int playerid)
+    public List<int> GetVault(int playerid)
     {
-        List<Card> deck = new List<Card>();
-        for (int i = 0; i < 45; i++)
+        List<int> deck = new List<int>();
+        for (int i = 0; i < 15; i++)
         {
-            Card newCard = Cards.TreasureGenerico.Clone(); 
-            newCard.Owner = playerid;
-            deck.Add(newCard);
+            deck.Add(NewCard(Cards.TreasureGenerico, playerid).InGameId);
         }
         return deck;
     }
 
+    public Card NewCard(Card card, int playerId) {
+        Card newCard = card.Clone();
+        newCard.InGameId = cards.Count;
+        cards.Add(newCard); 
+        newCard.Owner = playerId;
+        return newCard;
+    }
     public void DetermineStartingPlayer()
     {
         var rnd = new Random();
@@ -146,12 +162,10 @@ public class GameController : NetworkBehaviour
         // Initialize mulligan tracking for each player
         foreach (Player player in gameState.Players)
         {
-            player.mulliganCount = 1; // starts in 1 so we have to put 1 at the bottom.
+            Debug.Log(gameState.Players.Count);
+            Debug.Log($"Drawing initial hand for player {player}");
             player.KeepHand = false;
-            
-            // Initial draw of 7 cards
-            DrawCards(player, 7);
-            ServerSetDirty();
+            yield return PerformMulligan(player);
         }
 
         bool allPlayersKept = false;
@@ -176,11 +190,11 @@ public class GameController : NetworkBehaviour
                     gameState.ActivePlayer = gameState.Players.IndexOf(player);
                     
                     // Wait for the player's decision
-                    yield return StartCoroutine(AwaitMulliganDecision(player));
+                    yield return AwaitMulliganDecision(player);
 
                     if (!player.KeepHand)
                     {
-                        yield return StartCoroutine(PerformMulligan(player));
+                        yield return PerformMulligan(player);
                     }
                 }
             }
@@ -194,7 +208,7 @@ public class GameController : NetworkBehaviour
         {
             if (player.mulliganCount > 0)
             {
-                yield return StartCoroutine(AwaitBottomCards(player, player.mulliganCount));
+                yield return AwaitBottomCards(player, player.mulliganCount);
             }
         }
     }
@@ -209,7 +223,7 @@ public class GameController : NetworkBehaviour
 
         player.AwaitingMulliganDecision = false;
         player.MulliganDecisionMade = false;
-        ServerSetDirty();
+        yield return ServerSetDirty();
     }
 
     private IEnumerator PerformMulligan(Player player)
@@ -218,16 +232,16 @@ public class GameController : NetworkBehaviour
         player.mulliganCount++;
         
         // Return cards to library
-        MoveAll(player.Hand, player.Kingdom);
-        
+        yield return MoveAll(player.Hand, player.Kingdom);
+        Debug.Log("Shuffling and drawing a new hand for " + player + "." + " Cards in hand: " + player.Hand.Count);
         // Shuffle
-        ShuffleLibrary(player);
+        player.ShuffleLibrary();
         
         // Draw new hand of 7
         DrawCards(player, 7);
         
         yield return null;
-        ServerSetDirty();
+        yield return ServerSetDirty();
     }
 
     private IEnumerator AwaitBottomCards(Player player, int cardsToBottom)
@@ -239,25 +253,19 @@ public class GameController : NetworkBehaviour
         {
             Debug.Log("Waiting for " + player + " to select a card to put on bottom.");
             // Wait for player to select a card to put on bottom
-            yield return new WaitUntil(() => player.SelectedCardForBottom != null);
-            
+            yield return new WaitUntil(() => player.SelectedCardIdForBottom != -1);
+            yield return ServerSetDirty();
             // Move selected card to bottom of library
-            MoveCard(player.SelectedCardForBottom, player.Hand, player.Kingdom);
+            yield return MoveCard(player.SelectedCardIdForBottom, player.Hand, player.Kingdom);
             player.CardsToBottom--;
-            player.SelectedCardForBottom = null;
-            ServerSetDirty();
+            player.SelectedCardIdForBottom = -1;
+            yield return ServerSetDirty();
         }
         player.AwaitingBottomDecision = false;
-        ServerSetDirty();
+        yield return ServerSetDirty();
     }
 
     # endregion
-    private void ShuffleLibrary(Player player)
-    {
-        var rng = new Random();
-        player.Kingdom = player.Kingdom.OrderBy(x => rng.Next()).ToList();
-    }
-
     public bool CanStackSpeed(Player player, Stackable stackable)
     {
         if (stackable.speed == Speed.SLOW && !player.CanStackSlowActions())
@@ -381,25 +389,26 @@ public class GameController : NetworkBehaviour
 
     private IEnumerator AwaitPriority()
     {
-        ServerSetDirty();
+        yield return ServerSetDirty();
         ResetPriorityPassed();
         yield return HandlePriority();
     }
 
     public void ResolveCard(Card card)
     {
-        MoveCardTo(card, gameState.Players[card.Owner].GetZone(card.OnResolutionTargetZone));
+        MoveCardTo(card.InGameId, gameState.Players[card.Owner].GetZone(card.OnResolutionTargetZone));
     }
 
 
-    public void MoveCardTo(Card card, List<Card> to)
+    public void MoveCardTo(int cardId, List<int> to)
     {
-        to.Add(card);
+        to.Add(cardId);
     }
-    public void MoveCardTo(Card card, List<Card> from, List<Card> to)
+    public IEnumerator MoveCardTo(int card, List<int> from, List<int> to)
     {
         to.Add(from[from.IndexOf(card)]);
         from.RemoveAt(from.IndexOf(card));
+        yield return ServerSetDirty();
     }
     
     private void DrawCards(Player player, int count)
@@ -427,28 +436,50 @@ public class GameController : NetworkBehaviour
         Debug.Log("Player loses!");
     }
 
-    private void MoveAll(List<Card> from, List<Card> to)
+
+    private IEnumerator MoveAll(List<int> from, List<int> to)
     {
-        to.AddRange(from);
-        from.Clear();
-        ServerSetDirty();
+        Debug.Log("Moving " + from.Count + " cards from " + from + " to " + to);
+        List<int> cardsToMove = new List<int>(from); // Create a copy to avoid modification during iteration
+        foreach (int cardId in cardsToMove) {
+            yield return MoveCard(cardId, from, to);
+        }
+        yield return ServerSetDirty();
     }
     
     
-
-    public void MoveCard(Card card, List<Card> from, List<Card> to)
+    public IEnumerator MoveCard(int card, List<int> from, List<int> to)
     {
+        Debug.Log($"Attempting to move card {cards[card].Name} from {from.Count} cards to {to.Count} cards");
+        if (!from.Contains(card))
+        {
+            Debug.LogError($"Card {cards[card].Name} not found in source list!");
+            yield break;
+        }
+
+        int initialFromCount = from.Count;
+        int initialToCount = to.Count;
+        
         from.Remove(card);
         to.Add(card);
-        ServerSetDirty();
+        
+        Debug.Log($"Move complete - From: {initialFromCount}->{from.Count}, To: {initialToCount}->{to.Count}");
+        
+        if (from.Count != initialFromCount - 1 || to.Count != initialToCount + 1)
+        {
+            Debug.LogError("Card move operation did not complete as expected!");
+        }
+        
+        yield return ServerSetDirty();
     }
     
 
-    private void ApplyDamage(Player attackingPlayer, Player defendingPlayer)
+    private IEnumerator ApplyDamage(Player attackingPlayer, Player defendingPlayer)
     {
         var attackers = attackingPlayer.Attackers;
-        foreach (Card attacker in attackers)
+        foreach (int attackerId in attackers)
         {
+            Card attacker = cards[attackerId];
             if (attacker.Blockers.Count == 0)
             {
                 defendingPlayer.Life = (int)defendingPlayer.Life - (int)attacker.Power;
@@ -456,27 +487,27 @@ public class GameController : NetworkBehaviour
             else
             {
                 var blockers = attacker.Blockers;
-                foreach (Card blocker in blockers)
+                foreach (int blockerId in blockers)
                 {
-                    blocker.Damage += attacker.Power;
-                    attacker.Damage += blocker.Damage;
+                    cards[blockerId].Damage += attacker.Power;
+                    attacker.Damage += cards[blockerId].Damage;
                 }
             }
         }
-        ServerSetDirty();
+        yield return ServerSetDirty();
     }
 
-    private void Untap()
+    private IEnumerator Untap()
     {
-        MoveAll(gameState.GetActivePlayer().Paid, gameState.GetActivePlayer().Reserve);
-        MoveAll(gameState.GetActivePlayer().Attackers, gameState.GetActivePlayer().Regroup);
+        yield return MoveAll(gameState.GetActivePlayer().Paid, gameState.GetActivePlayer().Reserve);
+        yield return MoveAll(gameState.GetActivePlayer().Attackers, gameState.GetActivePlayer().Regroup);
     }
     
     
-    private void Reveal()
+    private IEnumerator Reveal()
     {
-        if (gameState.GetActivePlayer().Reserve.Count >=7) return;
-        MoveCardTo(gameState.GetActivePlayer().Reserve[0], gameState.GetActivePlayer().Vault, gameState.GetActivePlayer().Reserve);
+        if (gameState.GetActivePlayer().Reserve.Count >=7) yield break;
+        yield return MoveCardTo(gameState.GetActivePlayer().Reserve[0], gameState.GetActivePlayer().Vault, gameState.GetActivePlayer().Reserve);
     }
     private void Draw()
     {
@@ -501,12 +532,6 @@ public class GameController : NetworkBehaviour
     private IEnumerator MainPhase()
     {
         yield return AwaitPriority();
-        //
-        // var card = GetBestPlay(ActivePlayer);
-        // if (card != null)
-        // {
-        //     PlayCard(ActivePlayer, card);
-        // }
     }    
     private void CombatStart()
     {
@@ -518,7 +543,7 @@ public class GameController : NetworkBehaviour
     {
         Debug.Log("Waiting for " + gameState.GetActivePlayer() + " to declare attackers.");
         yield return new WaitUntil(() => declaredAttackers);
-        ServerSetDirty();
+        yield return ServerSetDirty();
     }
 
     public bool declaredBlockers;
@@ -526,7 +551,7 @@ public class GameController : NetworkBehaviour
     {
         Debug.Log("Waiting for " + gameState.Players[gameState.ActivePlayer - 1] + " to declare blockers.");
         yield return new WaitUntil(() => declaredBlockers);
-        ServerSetDirty();
+        yield return ServerSetDirty();
     }
     
     private void Damage()
@@ -538,17 +563,17 @@ public class GameController : NetworkBehaviour
     {
     }
 
-    public Card cardToDiscard;
+    public int cardToDiscard = -1;
 
     private IEnumerator Cleanup()
     {
         while (gameState.GetActivePlayer().Hand.Count > 7)
         {
             Debug.Log("Waiting for " + gameState.GetActivePlayer() + " to discard a card.");
-            yield return new WaitUntil(() => cardToDiscard!= null);
-            ServerSetDirty();
-            MoveCard(cardToDiscard, gameState.GetActivePlayer().Hand, gameState.GetActivePlayer().Discard);
-            cardToDiscard = null;
+            yield return new WaitUntil(() => cardToDiscard != -1);
+            yield return MoveCard(cardToDiscard, gameState.GetActivePlayer().Hand, gameState.GetActivePlayer().Discard);
+            cardToDiscard = -1;
+            yield return ServerSetDirty();
         }
     }
 
@@ -556,6 +581,7 @@ public class GameController : NetworkBehaviour
     private IEnumerator GameLoop()
     {
         
+        Debug.Log("GameController | Starting game loop");
         // Main game loop
         while (true)
         {
@@ -611,12 +637,13 @@ public class GameController : NetworkBehaviour
     private void WantsToStackUpdated(StackItem old, StackItem _new)
     {
         if (_new == null) return;
-        if (isServer) AddToStack(gameState.GetActivePlayer(), _new.getItem());
+        if (!isClient) AddToStack(gameState.GetActivePlayer(), _new.getItem());
     }
     [Server]
-    private void ServerSetDirty()
+    private IEnumerator ServerSetDirty()
     {
-        SetDirty();
         UpdateGameState();
+        SetDirty();
+        yield return new WaitForSeconds(0.001f);
     }
 }

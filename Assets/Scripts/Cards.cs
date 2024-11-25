@@ -3,23 +3,26 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
-using Mirror;
 using StackObjects;
 
 public static class Cards
-{
+{ 
+    public static Card getCardFromID(int id) {
+        return GameController.instance.cards[id];
+    }
     [Serializable]
     public class Card : Stackable
     {
-        public string Name;
+       
         public List<string> Types = new();
         public List<string> Subtypes = new();
         public List<string> Supertypes = new();
+        public int InGameId = 0;
         public int Power = 0;
         public int Resistance = 0;
         public int Cost = 0;
         public int Damage = 0;
-        public List<Card> Blockers = new();
+        public List<int> Blockers = new();
         public List<string> StaticAbilities = new();
         public List<string> TriggeredAbilities = new();
         public List<string> ActivatedAbilities = new();
@@ -39,7 +42,7 @@ public static class Cards
             return player == Owner;
         }
 
-        public List<Card> getControllerZone()
+        public List<int> getControllerZone()
         {
             return GameController.instance.gameState.Players[Caster].GetZone(currentZone);
         }

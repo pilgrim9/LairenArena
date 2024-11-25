@@ -18,21 +18,21 @@ public class RPCManager : NetworkBehaviour
     }
 
     [Command(requiresAuthority = false)]
-    public void RpcSyncMulliganDecision(bool keepHand)
+    public void RpcSyncMulliganDecision(bool keepHand, int playerId)
     {
-        GameController.instance.getLocalPlayer().KeepHand = keepHand;
-        GameController.instance.getLocalPlayer().MulliganDecisionMade = true;
+        GameController.instance.gameState.Players[playerId].KeepHand = keepHand;
+        GameController.instance.gameState.Players[playerId].MulliganDecisionMade = true;
     }
     [Command(requiresAuthority = false)]
-    public void RPCSelectCardForBottom(Cards.Card card)
+    public void RPCSelectCardForBottom(int card, int playerId)
     {
-        GameController.instance.getLocalPlayer().SelectCardForBottom(card);
+        GameController.instance.gameState.Players[playerId].SelectCardForBottom(card);
     }
 
     [Command(requiresAuthority = false)]
-    public void RpcSyncPriorityPassed()
+    public void RpcSyncPriorityPassed(int playerId)
     {
-        GameController.instance.getLocalPlayer().HasPassedPriority = true;
+        GameController.instance.gameState.Players[playerId].HasPassedPriority = true;
     }
     [Command(requiresAuthority = false)]
     public void RpcAddCardToStack(Cards.Card card)
@@ -42,11 +42,11 @@ public class RPCManager : NetworkBehaviour
 
     public void AcceptRpc()
     {
-        RpcSyncPriorityPassed();
-        RpcSyncMulliganDecision(true);
+        RpcSyncPriorityPassed(GameController.instance.GetLocalPlayerId());
+        RpcSyncMulliganDecision(true, GameController.instance.GetLocalPlayerId());
     }
     public void CancelRpc()
     {
-        RpcSyncMulliganDecision(false);
+        RpcSyncMulliganDecision(false, GameController.instance.GetLocalPlayerId());
     }
 }
