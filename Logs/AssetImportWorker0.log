@@ -1,0 +1,750 @@
+Using pre-set license
+Built from '2022.3/staging' branch; Version is '2022.3.25f1 (530ae0ba3889) revision 5442272'; Using compiler version '192829333'; Build Type 'Release'
+OS: 'Windows 10  (10.0.19045) 64bit Core' Language: 'en' Physical Memory: 12240 MB
+BatchMode: 1, IsHumanControllingUs: 0, StartBugReporterOnCrash: 0, Is64bit: 1, IsPro: 1
+
+COMMAND LINE ARGUMENTS:
+C:\Program Files\Unity\Hub\Editor\2022.3.25f1\Editor\Unity.exe
+-adb2
+-batchMode
+-noUpm
+-name
+AssetImportWorker0
+-projectPath
+C:/Users/Work/Dev/LairenArena/LairenArena
+-logFile
+Logs/AssetImportWorker0.log
+-srvPort
+53615
+Successfully changed project path to: C:/Users/Work/Dev/LairenArena/LairenArena
+C:/Users/Work/Dev/LairenArena/LairenArena
+[UnityMemory] Configuration Parameters - Can be set up in boot.config
+    "memorysetup-bucket-allocator-granularity=16"
+    "memorysetup-bucket-allocator-bucket-count=8"
+    "memorysetup-bucket-allocator-block-size=33554432"
+    "memorysetup-bucket-allocator-block-count=8"
+    "memorysetup-main-allocator-block-size=16777216"
+    "memorysetup-thread-allocator-block-size=16777216"
+    "memorysetup-gfx-main-allocator-block-size=16777216"
+    "memorysetup-gfx-thread-allocator-block-size=16777216"
+    "memorysetup-cache-allocator-block-size=4194304"
+    "memorysetup-typetree-allocator-block-size=2097152"
+    "memorysetup-profiler-bucket-allocator-granularity=16"
+    "memorysetup-profiler-bucket-allocator-bucket-count=8"
+    "memorysetup-profiler-bucket-allocator-block-size=33554432"
+    "memorysetup-profiler-bucket-allocator-block-count=8"
+    "memorysetup-profiler-allocator-block-size=16777216"
+    "memorysetup-profiler-editor-allocator-block-size=1048576"
+    "memorysetup-temp-allocator-size-main=16777216"
+    "memorysetup-job-temp-allocator-block-size=2097152"
+    "memorysetup-job-temp-allocator-block-size-background=1048576"
+    "memorysetup-job-temp-allocator-reduction-small-platforms=262144"
+    "memorysetup-allocator-temp-initial-block-size-main=262144"
+    "memorysetup-allocator-temp-initial-block-size-worker=262144"
+    "memorysetup-temp-allocator-size-background-worker=32768"
+    "memorysetup-temp-allocator-size-job-worker=262144"
+    "memorysetup-temp-allocator-size-preload-manager=33554432"
+    "memorysetup-temp-allocator-size-nav-mesh-worker=65536"
+    "memorysetup-temp-allocator-size-audio-worker=65536"
+    "memorysetup-temp-allocator-size-cloud-worker=32768"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gfx=262144"
+Player connection [28828] Host "[IP] 192.168.1.4 [Port] 0 [Flags] 2 [Guid] 3354660293 [EditorId] 3354660293 [Version] 1048832 [Id] WindowsEditor(7,DESKTOP-JOJFKQ6) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" joined multi-casting on [225.0.0.222:54997]...
+
+Player connection [28828] Host "[IP] 192.168.1.4 [Port] 0 [Flags] 2 [Guid] 3354660293 [EditorId] 3354660293 [Version] 1048832 [Id] WindowsEditor(7,DESKTOP-JOJFKQ6) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" joined alternative multi-casting on [225.0.0.222:34997]...
+
+[Physics::Module] Initialized MultithreadedJobDispatcher with 7 workers.
+Refreshing native plugins compatible for Editor in 37.68 ms, found 4 plugins.
+Preloading 1 native plugins for Editor in 3.94 ms.
+Initialize engine version: 2022.3.25f1 (530ae0ba3889)
+[Subsystems] Discovering subsystems at path C:/Program Files/Unity/Hub/Editor/2022.3.25f1/Editor/Data/Resources/UnitySubsystems
+[Subsystems] Discovering subsystems at path C:/Users/Work/Dev/LairenArena/LairenArena/Assets
+GfxDevice: creating device client; threaded=0; jobified=0
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: NVIDIA GeForce GTX 1060 (ID=0x1c60)
+    Vendor:   NVIDIA
+    VRAM:     2965 MB
+    Driver:   31.0.15.5212
+Initialize mono
+Mono path[0] = 'C:/Program Files/Unity/Hub/Editor/2022.3.25f1/Editor/Data/Managed'
+Mono path[1] = 'C:/Program Files/Unity/Hub/Editor/2022.3.25f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32'
+Mono config path = 'C:/Program Files/Unity/Hub/Editor/2022.3.25f1/Editor/Data/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56048
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: C:/Program Files/Unity/Hub/Editor/2022.3.25f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
+Registered in 0.013762 seconds.
+- Loaded All Assemblies, in  0.497 seconds
+Native extension for WindowsStandalone target not found
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  0.393 seconds
+Domain Reload Profiling: 889ms
+	BeginReloadAssembly (156ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (0ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (1ms)
+	RebuildCommonClasses (47ms)
+	RebuildNativeTypeToScriptingClass (14ms)
+	initialDomainReloadingComplete (90ms)
+	LoadAllAssembliesAndSetupDomain (189ms)
+		LoadAssemblies (153ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (187ms)
+			TypeCache.Refresh (184ms)
+				TypeCache.ScanAssembly (165ms)
+			ScanForSourceGeneratedMonoScriptInfo (1ms)
+			ResolveRequiredComponents (1ms)
+	FinalizeReload (394ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (306ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (13ms)
+			SetLoadedEditorAssemblies (12ms)
+			RefreshPlugins (0ms)
+			BeforeProcessingInitializeOnLoad (3ms)
+			ProcessInitializeOnLoadAttributes (211ms)
+			ProcessInitializeOnLoadMethodAttributes (67ms)
+			AfterProcessingInitializeOnLoad (0ms)
+			EditorAssembliesLoaded (0ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (0ms)
+========================================================================
+Worker process is ready to serve import requests
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+- Loaded All Assemblies, in  1.967 seconds
+Refreshing native plugins compatible for Editor in 12.87 ms, found 4 plugins.
+Native extension for WindowsStandalone target not found
+Package Manager log level set to [2]
+[Package Manager] Server::EnsureServerProcessIsRunning -- launch failed, reason: Unity was launched with the -noUpm command-line argument
+[Package Manager] UpmClient::Send -- Unable to send message (not connected to UPM process).
+[Package Manager] Cannot connect to Unity Package Manager local server
+Mirror | mirror-networking.com | discord.gg/N9QVxbM
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  1.411 seconds
+Domain Reload Profiling: 3374ms
+	BeginReloadAssembly (279ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (8ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (29ms)
+	RebuildCommonClasses (65ms)
+	RebuildNativeTypeToScriptingClass (26ms)
+	initialDomainReloadingComplete (108ms)
+	LoadAllAssembliesAndSetupDomain (1485ms)
+		LoadAssemblies (968ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (709ms)
+			TypeCache.Refresh (638ms)
+				TypeCache.ScanAssembly (596ms)
+			ScanForSourceGeneratedMonoScriptInfo (54ms)
+			ResolveRequiredComponents (12ms)
+	FinalizeReload (1412ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (1157ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (9ms)
+			SetLoadedEditorAssemblies (8ms)
+			RefreshPlugins (0ms)
+			BeforeProcessingInitializeOnLoad (183ms)
+			ProcessInitializeOnLoadAttributes (810ms)
+			ProcessInitializeOnLoadMethodAttributes (137ms)
+			AfterProcessingInitializeOnLoad (9ms)
+			EditorAssembliesLoaded (0ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (8ms)
+Launched and connected shader compiler UnityShaderCompiler.exe after 0.06 seconds
+Refreshing native plugins compatible for Editor in 15.57 ms, found 4 plugins.
+Preloading 1 native plugins for Editor in 0.07 ms.
+Unloading 5090 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 96 unused Assets / (77.1 KB). Loaded Objects now: 5522.
+Memory consumption went from 178.3 MB to 178.2 MB.
+Total: 6.792000 ms (FindLiveObjects: 0.589300 ms CreateObjectMapping: 0.681100 ms MarkObjects: 5.318300 ms  DeleteObjects: 0.202200 ms)
+
+AssetImportParameters requested are different than current active one (requested -> active):
+  custom:container-demuxer-ogg: 62fdf1f143b41e24485cea50d1cbac27 -> 
+  custom:video-decoder-ogg-theora: a1e56fd34408186e4bbccfd4996cb3dc -> 
+  custom:framework-win-MediaFoundation: 216162199b28c13a410421893ffa2e32 -> 
+  custom:CustomObjectIndexerAttribute: 9a22284fe3817be447336de3de66b15e -> 
+  custom:container-demuxer-webm: 4f35f7cbe854078d1ac9338744f61a02 -> 
+  custom:container-muxer-webm: aa71ff27fc2769a1b78a27578f13a17b -> 
+  custom:video-decoder-webm-vp8: 9c59270c3fd7afecdb556c50c9e8de78 -> 
+  custom:SearchIndexIgnoredProperties: e643bd26f0fe6173181afceb89e7c659 -> 
+  custom:AudioImporter_EditorPlatform: d09bf68614088b80899f8185d706f6e7 -> 
+  custom:video-encoder-webm-vp8: eb34c28f22e8b96e1ab97ce403110664 -> 
+  custom:audio-decoder-ogg-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+  custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+========================================================================
+Received Import Request.
+  Time since last request: 46237.409122 seconds.
+  path: Assets/Resources/Cards/AFMID, LIDER ESTRATEGA.jpg
+  artifactKey: Guid(eb91ac18ff401814bab7f50e3068eb4e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/AFMID, LIDER ESTRATEGA.jpg using Guid(eb91ac18ff401814bab7f50e3068eb4e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '0cf1e5047ba56aec3d6390677d1ea0d0') in 0.091356 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.000034 seconds.
+  path: Assets/Resources/Cards/AGUA EN EL DESIERTO.jpg
+  artifactKey: Guid(3796db25c8dd84f4f8bae885b6747f1b) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/AGUA EN EL DESIERTO.jpg using Guid(3796db25c8dd84f4f8bae885b6747f1b) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '729ce6ed9acc6d81449b0d37d380fafa') in 0.012585 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.000024 seconds.
+  path: Assets/Resources/Cards/ALMIRANTE FREDERICK.jpg
+  artifactKey: Guid(0b1c8f96e66705e4d8749df128fa6341) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/ALMIRANTE FREDERICK.jpg using Guid(0b1c8f96e66705e4d8749df128fa6341) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '80430aaba28f9d2ad07dae1a03ed0c44') in 0.010170 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.000022 seconds.
+  path: Assets/Resources/Cards/APLASTANDO VOLUNTADES.jpg
+  artifactKey: Guid(1faa79b5e1e197c4b8eed5650db84ec4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/APLASTANDO VOLUNTADES.jpg using Guid(1faa79b5e1e197c4b8eed5650db84ec4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '13c7fb7e0ad58723a62809277533450b') in 0.016464 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.000018 seconds.
+  path: Assets/Resources/Cards/APLASTATROPAS.jpg
+  artifactKey: Guid(8a92857079b33734986390c8d8fb7464) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/APLASTATROPAS.jpg using Guid(8a92857079b33734986390c8d8fb7464) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '2725b0b44293e5dd60bdbf928800d56e') in 0.012521 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.000023 seconds.
+  path: Assets/Resources/Cards/AHRIMAN, LINAJE BURLESCO.jpg
+  artifactKey: Guid(4cef4af7428726f47ab9f6f1a9244aa1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/AHRIMAN, LINAJE BURLESCO.jpg using Guid(4cef4af7428726f47ab9f6f1a9244aa1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ddab475b9bba9446be90a014e93360dd') in 0.010688 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.000026 seconds.
+  path: Assets/Resources/Cards/ARQUERO DE HAMRRA.jpg
+  artifactKey: Guid(fe4d35dc427daf0409a4421f2bb7a8d1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/ARQUERO DE HAMRRA.jpg using Guid(fe4d35dc427daf0409a4421f2bb7a8d1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'fe8c2d83eb742e51ca17e498fe4b789b') in 0.009332 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.000017 seconds.
+  path: Assets/Resources/Cards/AIXA, DESERTORA DE LA CORONA.jpg
+  artifactKey: Guid(a25450fd53cc59548b6d0cbb6519a524) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/AIXA, DESERTORA DE LA CORONA.jpg using Guid(a25450fd53cc59548b6d0cbb6519a524) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '5a9b1d708ff67f5021956ae6a8798898') in 0.009051 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.000016 seconds.
+  path: Assets/Resources/Cards/ARTILUGIO ATRAPA MENTES.jpg
+  artifactKey: Guid(36ca32d1b2868fb44a967b6498c2b191) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/ARTILUGIO ATRAPA MENTES.jpg using Guid(36ca32d1b2868fb44a967b6498c2b191) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '69642810354e929050127b6c76cbf836') in 0.009725 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.000019 seconds.
+  path: Assets/Resources/Cards/ALDEBERAN, VIGILANTE DEL PASO.jpg
+  artifactKey: Guid(a6fd33b03e3cda44ab628602eaf33b40) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/ALDEBERAN, VIGILANTE DEL PASO.jpg using Guid(a6fd33b03e3cda44ab628602eaf33b40) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'b0ca86ba333df82b67fa7a73ed69ea90') in 0.009363 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.000022 seconds.
+  path: Assets/Resources/Cards/ASESINA SANGUINARIA 1.jpg
+  artifactKey: Guid(a13ebc2687d518e4babec4dde4f6a140) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/ASESINA SANGUINARIA 1.jpg using Guid(a13ebc2687d518e4babec4dde4f6a140) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'a8922fd721b1cc19685f84426242fad0') in 0.009662 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.000024 seconds.
+  path: Assets/Resources/Cards/AFMID, LIDER ESTRATEGA 1.jpg
+  artifactKey: Guid(35f8e6e1075b3824cba45c0092945265) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/AFMID, LIDER ESTRATEGA 1.jpg using Guid(35f8e6e1075b3824cba45c0092945265) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'b73a22ea0e1b9530c5d2ffc894607ae0') in 0.009034 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.000017 seconds.
+  path: Assets/Resources/Cards/ANTIGUO APRENDIZ DE KYLE.jpg
+  artifactKey: Guid(91dc72e46c650fa4a961d776ea02fa74) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/ANTIGUO APRENDIZ DE KYLE.jpg using Guid(91dc72e46c650fa4a961d776ea02fa74) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '685f33bf1eede344b306232c8bdf34af') in 0.009800 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.000021 seconds.
+  path: Assets/Resources/Cards/ARMERIA DE LA CORONA 1.jpg
+  artifactKey: Guid(99db028b792fbdb4093a9c7194f39980) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/ARMERIA DE LA CORONA 1.jpg using Guid(99db028b792fbdb4093a9c7194f39980) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'fde9127525c994145809828ad27f536d') in 0.010216 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.000017 seconds.
+  path: Assets/Resources/Cards/ALIANZA O RIVALIDAD.jpg
+  artifactKey: Guid(086b114b9f8770041ac697cd87a7f6f8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/ALIANZA O RIVALIDAD.jpg using Guid(086b114b9f8770041ac697cd87a7f6f8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '2ba9632d65a5e3edbf579cbcb5e3ff75') in 0.009550 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.000019 seconds.
+  path: Assets/Resources/Cards/APICULTOR DEL PUEBLO.jpg
+  artifactKey: Guid(67cd7e2602572de4a9f94f9f771bd27f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/APICULTOR DEL PUEBLO.jpg using Guid(67cd7e2602572de4a9f94f9f771bd27f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '73778e7b55312e873b2eee93f1cadb5c') in 0.010019 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.000023 seconds.
+  path: Assets/Resources/Cards/ARIETE FURTIVO.jpg
+  artifactKey: Guid(4f664edbb2f667c42a7ded6347b98fc2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/ARIETE FURTIVO.jpg using Guid(4f664edbb2f667c42a7ded6347b98fc2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '88305361b1c72f86ed1885f7b22b6a53') in 0.010152 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.000025 seconds.
+  path: Assets/Resources/Cards/ALFER, LINAJE FORJADOR.jpg
+  artifactKey: Guid(166bd400e42208a4dbb781d6a4855e75) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/ALFER, LINAJE FORJADOR.jpg using Guid(166bd400e42208a4dbb781d6a4855e75) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'a5ae6d679e9b57fa88234d3914fa59fd') in 0.008606 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.000029 seconds.
+  path: Assets/Resources/Cards/AIXA, LA GUERRERA.jpg
+  artifactKey: Guid(820c2121d26a77b4b8e63e94edaae94c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/AIXA, LA GUERRERA.jpg using Guid(820c2121d26a77b4b8e63e94edaae94c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '538e8aaf6438ab2427d376cc45afabfc') in 0.011066 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.000030 seconds.
+  path: Assets/Resources/Cards/ALUMNO DE LA PROTECCION.jpg
+  artifactKey: Guid(77747c08ff1647044831f188a2d8ad08) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/ALUMNO DE LA PROTECCION.jpg using Guid(77747c08ff1647044831f188a2d8ad08) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ef4260401c1e08cf3f725b2e161f019e') in 0.009553 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.000019 seconds.
+  path: Assets/Resources/Cards/ALMA RENOVADA.jpg
+  artifactKey: Guid(afef5fe1edc76e34fa9b895f5d94c7a2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/ALMA RENOVADA.jpg using Guid(afef5fe1edc76e34fa9b895f5d94c7a2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'b93330cc69d3bc3463f6b74becbfdc5b') in 0.010684 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.000020 seconds.
+  path: Assets/Resources/Cards/AFMID, LA MANO DERECHA.jpg
+  artifactKey: Guid(be2122b54e2f54045a8460e659b5f595) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/AFMID, LA MANO DERECHA.jpg using Guid(be2122b54e2f54045a8460e659b5f595) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '10284a2a29e050d7823ff5af57f6fe11') in 0.008853 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 4.828901 seconds.
+  path: Assets/Resources/Cards/TOTEM DEL DRAGON 1.jpg
+  artifactKey: Guid(fb3b67fd6772fd24c9cacfddb376df62) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/TOTEM DEL DRAGON 1.jpg using Guid(fb3b67fd6772fd24c9cacfddb376df62) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '5c7ac3fb4a3d150f4d538ceccb7ef0f4') in 0.018618 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.000026 seconds.
+  path: Assets/Resources/Cards/VENDAJES DE GUERRA 1.jpg
+  artifactKey: Guid(72c4bbdcf9cd1e742aca10685b6cce39) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/VENDAJES DE GUERRA 1.jpg using Guid(72c4bbdcf9cd1e742aca10685b6cce39) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '83a9e11cd4442c26fddc8930ab60715b') in 0.011029 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.000024 seconds.
+  path: Assets/Resources/Cards/TROPAS DEL FRENTE.jpg
+  artifactKey: Guid(60b257787abe8ac4ebe5cb3ca9df7f92) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/TROPAS DEL FRENTE.jpg using Guid(60b257787abe8ac4ebe5cb3ca9df7f92) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'e5edb09ad0876231e226e59a73d5237d') in 0.009657 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.000019 seconds.
+  path: Assets/Resources/Cards/TROPA DE LA PEDRAMANCIA.jpg
+  artifactKey: Guid(b06778e6a6bc5d44a9cba269367c7b1d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/TROPA DE LA PEDRAMANCIA.jpg using Guid(b06778e6a6bc5d44a9cba269367c7b1d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '375e1c3dd6711aef24b546fb6a3ba6be') in 0.010905 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.000017 seconds.
+  path: Assets/Resources/Cards/VENGANZA DE ERODON.jpg
+  artifactKey: Guid(38a43aedb29a77740bcc8a04050cc979) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/VENGANZA DE ERODON.jpg using Guid(38a43aedb29a77740bcc8a04050cc979) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '64f348faec8dc46ef8418d3b511bed25') in 0.009509 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.000024 seconds.
+  path: Assets/Resources/Cards/VORTICE DE ALMAS 1.jpg
+  artifactKey: Guid(5aedc81f09761db49afc1ad90e93fce8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/VORTICE DE ALMAS 1.jpg using Guid(5aedc81f09761db49afc1ad90e93fce8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'db1f519612e26382bbfbc3a9246f9bcd') in 0.009415 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.000016 seconds.
+  path: Assets/Resources/Cards/VORTICE DE ALMAS.jpg
+  artifactKey: Guid(bab47968eeba75844a5714ca6e79e316) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/VORTICE DE ALMAS.jpg using Guid(bab47968eeba75844a5714ca6e79e316) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'df3be7148b8ddc7a7435b5d7af5d6f46') in 0.009361 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.000019 seconds.
+  path: Assets/Resources/Cards/YION, CREADORA DE ILUSIONES.jpg
+  artifactKey: Guid(cc1dea1b76d6f6c4e9d2a3063de0ab32) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/YION, CREADORA DE ILUSIONES.jpg using Guid(cc1dea1b76d6f6c4e9d2a3063de0ab32) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'c7dedc449b9fa8fb55da6f4bd01974b3') in 0.011452 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.000017 seconds.
+  path: Assets/Resources/Cards/WAGNER, ARCHIMAGO DE LA TORRE.jpg
+  artifactKey: Guid(8489472cb39d2b748b3fb0b873a92283) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/WAGNER, ARCHIMAGO DE LA TORRE.jpg using Guid(8489472cb39d2b748b3fb0b873a92283) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '7b912e89a9ae1310dd2cdac8566515de') in 0.008814 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.000020 seconds.
+  path: Assets/Resources/Cards/TRIPULANTE TRAICIONADO.jpg
+  artifactKey: Guid(9bc6774e86e549d4e8c3689064dda45c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/TRIPULANTE TRAICIONADO.jpg using Guid(9bc6774e86e549d4e8c3689064dda45c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '3588f5f4d41c46de23997d870c485046') in 0.008954 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.000018 seconds.
+  path: Assets/Resources/Cards/TROPAS DE REFUERZO.jpg
+  artifactKey: Guid(b5060140970bed6409afe87ab9f9e0a0) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/TROPAS DE REFUERZO.jpg using Guid(b5060140970bed6409afe87ab9f9e0a0) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'e7ca1144692dc772519d58e61d426f63') in 0.011168 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.000018 seconds.
+  path: Assets/Resources/Cards/URLAMOK, GUARDIAN DEL ORO.jpg
+  artifactKey: Guid(213b795f2b47ddb488e7234bde9b6326) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/URLAMOK, GUARDIAN DEL ORO.jpg using Guid(213b795f2b47ddb488e7234bde9b6326) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'c6fce537b5a3421bafbf2d5c842e87a6') in 0.008747 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.000019 seconds.
+  path: Assets/Resources/Cards/VOLUNTARIO PARA SACRIFICIO.jpg
+  artifactKey: Guid(9f4fbf13ddb61364ab063d173b07b522) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/VOLUNTARIO PARA SACRIFICIO.jpg using Guid(9f4fbf13ddb61364ab063d173b07b522) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '040034383add14ead3668e9005b9bd7e') in 0.007620 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.000021 seconds.
+  path: Assets/Resources/Cards/VINO VIGORIZANTE DE MONJE.jpg
+  artifactKey: Guid(19b33e58e6b30c04ca10917814a39b06) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/VINO VIGORIZANTE DE MONJE.jpg using Guid(19b33e58e6b30c04ca10917814a39b06) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'a45104d85c98a1e1c899232e47ea8abe') in 0.007991 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.000021 seconds.
+  path: Assets/Resources/Cards/VENDAJES DE GUERRA.jpg
+  artifactKey: Guid(9a20e3f4f12c7874799743f7dd1277c0) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/VENDAJES DE GUERRA.jpg using Guid(9a20e3f4f12c7874799743f7dd1277c0) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'b3282bb3487e182c67bfc05712fce567') in 0.007753 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.000015 seconds.
+  path: Assets/Resources/Cards/VIDENTE EFECTIVA.jpg
+  artifactKey: Guid(f2590a15651d6774ea4f8f5377bd22dc) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/VIDENTE EFECTIVA.jpg using Guid(f2590a15651d6774ea4f8f5377bd22dc) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'd89f7eeb5934ddde00add1df05201bdf') in 0.010124 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.000018 seconds.
+  path: Assets/Resources/Cards/TRIPULANTE TRAICIONADO 1.jpg
+  artifactKey: Guid(34d880b0ac1842747b9d00d88365d3a3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/TRIPULANTE TRAICIONADO 1.jpg using Guid(34d880b0ac1842747b9d00d88365d3a3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '89b5c30b1210194ba88a7d61a0a198a3') in 0.009765 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 54.395341 seconds.
+  path: Assets/Resources/Cards/AIXA, DESERTORA DE LA CORONA.jpg
+  artifactKey: Guid(a25450fd53cc59548b6d0cbb6519a524) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/AIXA, DESERTORA DE LA CORONA.jpg using Guid(a25450fd53cc59548b6d0cbb6519a524) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '92349fce872fd514c8e25b98f566dd22') in 0.069584 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 0.125743 seconds.
+  path: Assets/Resources/Cards/TOTEM DEL DRAGON 1.jpg
+  artifactKey: Guid(fb3b67fd6772fd24c9cacfddb376df62) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/TOTEM DEL DRAGON 1.jpg using Guid(fb3b67fd6772fd24c9cacfddb376df62) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '3725e05318d3ed017e4e37bb8231efda') in 0.018200 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 0.000024 seconds.
+  path: Assets/Resources/Cards/YOYI, HERALDO DE LA DESTRUCCION.jpg
+  artifactKey: Guid(e4ee5088f33830348916e0020a63a0ab) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/YOYI, HERALDO DE LA DESTRUCCION.jpg using Guid(e4ee5088f33830348916e0020a63a0ab) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '1aa7357e509083384ebdcf5178bd22eb') in 0.014381 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 0.000020 seconds.
+  path: Assets/Resources/Cards/VENDAJES DE GUERRA 1.jpg
+  artifactKey: Guid(72c4bbdcf9cd1e742aca10685b6cce39) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/VENDAJES DE GUERRA 1.jpg using Guid(72c4bbdcf9cd1e742aca10685b6cce39) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'd91697db4b4f7fabd9b108c668f3c28d') in 0.014256 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 0.000023 seconds.
+  path: Assets/Resources/Cards/TRAMPA DE ESPINAS.jpg
+  artifactKey: Guid(7e8f35bc07dc05049907de63517723bb) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/TRAMPA DE ESPINAS.jpg using Guid(7e8f35bc07dc05049907de63517723bb) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '3daba72328a4c758f5ecddffd5feb733') in 0.011980 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 0.000019 seconds.
+  path: Assets/Resources/Cards/TROPAS DEL FRENTE.jpg
+  artifactKey: Guid(60b257787abe8ac4ebe5cb3ca9df7f92) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/TROPAS DEL FRENTE.jpg using Guid(60b257787abe8ac4ebe5cb3ca9df7f92) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '21e106ea8238f7b2bc755c245b3f3528') in 0.012925 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 0.000046 seconds.
+  path: Assets/Resources/Cards/TROPA DE LA PEDRAMANCIA.jpg
+  artifactKey: Guid(b06778e6a6bc5d44a9cba269367c7b1d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/TROPA DE LA PEDRAMANCIA.jpg using Guid(b06778e6a6bc5d44a9cba269367c7b1d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '4408b98c44425b47ca932e59f130b117') in 0.012541 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 0.000019 seconds.
+  path: Assets/Resources/Cards/VENGANZA DE ERODON.jpg
+  artifactKey: Guid(38a43aedb29a77740bcc8a04050cc979) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/VENGANZA DE ERODON.jpg using Guid(38a43aedb29a77740bcc8a04050cc979) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '75b597765e26a0daabb17e2bcb18dd5c') in 0.011505 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 0.000020 seconds.
+  path: Assets/Resources/Cards/TRIPULACION EN CAMINO.jpg
+  artifactKey: Guid(7da8696ebc8aaa24b9d257083c7cfe84) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/TRIPULACION EN CAMINO.jpg using Guid(7da8696ebc8aaa24b9d257083c7cfe84) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '8516a585f6480486f50cb1a58762bb26') in 0.013091 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 0.000019 seconds.
+  path: Assets/Resources/Cards/YOR-NAN, MANIPULADOR ENERGETICO.jpg
+  artifactKey: Guid(2f3de3b12260ca846be92d2e4e738683) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/YOR-NAN, MANIPULADOR ENERGETICO.jpg using Guid(2f3de3b12260ca846be92d2e4e738683) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'a013d29408786fb89189753167f50f1a') in 0.012858 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 0.000023 seconds.
+  path: Assets/Resources/Cards/UNION DE BRUJAS.jpg
+  artifactKey: Guid(4c40a30a7a7030248ada256d06918768) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/UNION DE BRUJAS.jpg using Guid(4c40a30a7a7030248ada256d06918768) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '62a1375850bb73817f87007ce5394616') in 0.016262 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 0.000038 seconds.
+  path: Assets/Resources/Cards/VERDUGO INFERNAL.jpg
+  artifactKey: Guid(04f399d2859a2d14b9ba052930cfa334) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/VERDUGO INFERNAL.jpg using Guid(04f399d2859a2d14b9ba052930cfa334) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '901ae000be4e18f93ab4bedb91c5f383') in 0.012127 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 0.000019 seconds.
+  path: Assets/Resources/Cards/YOR-NAN, MANIPULADOR ENERGETICO 1.jpg
+  artifactKey: Guid(76c531c66efa94d43a081475fee4beac) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/YOR-NAN, MANIPULADOR ENERGETICO 1.jpg using Guid(76c531c66efa94d43a081475fee4beac) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'c659f81fb7e2c258bb34367f885eb6d6') in 0.012398 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 0.000019 seconds.
+  path: Assets/Resources/Cards/VERONICA, LA MALDITA.jpg
+  artifactKey: Guid(ec9e6d56d5809034a964e78c6664bd14) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/VERONICA, LA MALDITA.jpg using Guid(ec9e6d56d5809034a964e78c6664bd14) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '0493cf4fe6f19c4c3c63e8857e9d3c43') in 0.013663 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 0.000023 seconds.
+  path: Assets/Resources/Cards/YIAN, CULTOR DE ORDENES.jpg
+  artifactKey: Guid(900ee2548c883c54e9690f3faab4639e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/YIAN, CULTOR DE ORDENES.jpg using Guid(900ee2548c883c54e9690f3faab4639e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '7cc554c730f4d739ed02f6876295bec3') in 0.012556 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 0.000023 seconds.
+  path: Assets/Resources/Cards/VIGILANTE DEL PORTAL.jpg
+  artifactKey: Guid(fc6e366b7f7e7ba488089d1efbb80d26) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/VIGILANTE DEL PORTAL.jpg using Guid(fc6e366b7f7e7ba488089d1efbb80d26) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'f8f4e556a3c061ee7e98a9d7351dd079') in 0.011924 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 0.000028 seconds.
+  path: Assets/Resources/Cards/WAGNER, ARCHIMAGO DE LA TORRE 1.jpg
+  artifactKey: Guid(e785c582b32c5fd42a88425f3a111278) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/WAGNER, ARCHIMAGO DE LA TORRE 1.jpg using Guid(e785c582b32c5fd42a88425f3a111278) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '537c8db1cbd939b53e99e1a50f8f68a3') in 0.014946 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 0.000017 seconds.
+  path: Assets/Resources/Cards/VENDAJES DE GUERRA.jpg
+  artifactKey: Guid(9a20e3f4f12c7874799743f7dd1277c0) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/VENDAJES DE GUERRA.jpg using Guid(9a20e3f4f12c7874799743f7dd1277c0) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'cdfe871e0cd6bbb9079a27366bfddf69') in 0.011404 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 0.000014 seconds.
+  path: Assets/Resources/Cards/TROPAS DE REFUERZO 1.jpg
+  artifactKey: Guid(f37216a436b247249a66a9b8dee961ef) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/TROPAS DE REFUERZO 1.jpg using Guid(f37216a436b247249a66a9b8dee961ef) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'b3ea70e218ac3d403588d5714694e507') in 0.013326 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 0.000022 seconds.
+  path: Assets/Resources/Cards/UGUEY, FUNDADOR DE LA FE.jpg
+  artifactKey: Guid(ae9fee936d772c34bbc486f5dee705b4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/UGUEY, FUNDADOR DE LA FE.jpg using Guid(ae9fee936d772c34bbc486f5dee705b4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'a1d1559d1f9346b0a2d39c02cf552d95') in 0.012420 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 3.930208 seconds.
+  path: Assets/Resources/Cards/DOBLEGADORA DE ALMAS.jpg
+  artifactKey: Guid(623fa088ca6bbaa42bda3e54688cb1e4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/DOBLEGADORA DE ALMAS.jpg using Guid(623fa088ca6bbaa42bda3e54688cb1e4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'f963425a11ff768007fdbad2072dce55') in 0.017386 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 0.000020 seconds.
+  path: Assets/Resources/Cards/DORIAN, MAULLIDO INFERNAL.jpg
+  artifactKey: Guid(f066c069ca249524a80910c24c12460e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/DORIAN, MAULLIDO INFERNAL.jpg using Guid(f066c069ca249524a80910c24c12460e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '5ede30f2a462dc3208feba4367dc627f') in 0.015041 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 0.000059 seconds.
+  path: Assets/Resources/Cards/EMANADOR DE DAÑO.jpg
+  artifactKey: Guid(4335837ba47605d44b9426ca8394c941) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/EMANADOR DE DAÑO.jpg using Guid(4335837ba47605d44b9426ca8394c941) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'd305560c5724f276e84a4b4f6814be93') in 0.015177 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 0.000032 seconds.
+  path: Assets/Resources/Cards/DOMINADORA DEL AIRE.jpg
+  artifactKey: Guid(14bf0b90344fa7844966ac4ac0988f5d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/DOMINADORA DEL AIRE.jpg using Guid(14bf0b90344fa7844966ac4ac0988f5d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'c42b3ba8ce7f507dfa82a30b965682eb') in 0.015249 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 0.000018 seconds.
+  path: Assets/Mirror/Hosting/Edgegap/Editor/EdgegapServerData.uss
+  artifactKey: Guid(da5e3f58bd8cde14789f7c61df3f59f4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Mirror/Hosting/Edgegap/Editor/EdgegapServerData.uss using Guid(da5e3f58bd8cde14789f7c61df3f59f4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'd26fa0ddfd7d57046483db181852e727') in 0.009781 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 0.000017 seconds.
+  path: Assets/Resources/Cards/EMISARIO DE BORNIS.jpg
+  artifactKey: Guid(65c879d56658e99458ede89262d3df01) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/EMISARIO DE BORNIS.jpg using Guid(65c879d56658e99458ede89262d3df01) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'c8ed459227ba12997c92f6a57838ad1f') in 0.013017 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 0.000020 seconds.
+  path: Assets/Resources/Cards/EL MAESTRO.jpg
+  artifactKey: Guid(50f009b7d84a1b748af1d86720f7e188) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/EL MAESTRO.jpg using Guid(50f009b7d84a1b748af1d86720f7e188) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '09f95a3dbe792c7ffac4cf4ea8f2f59f') in 0.014230 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 0.000020 seconds.
+  path: Assets/Resources/Cards/EL GARRUANO, LEYENDA DE HAMRRA.jpg
+  artifactKey: Guid(6c3537e423ff82c4a871575a8f36c296) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/EL GARRUANO, LEYENDA DE HAMRRA.jpg using Guid(6c3537e423ff82c4a871575a8f36c296) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'edb1c39a078dbc6b78fd4f7ed126678f') in 0.012005 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 0.000017 seconds.
+  path: Assets/Resources/Cards/EDICTOS DE LA REINA 1.jpg
+  artifactKey: Guid(682a9fe3ca11a8f4e933d66f88453165) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/EDICTOS DE LA REINA 1.jpg using Guid(682a9fe3ca11a8f4e933d66f88453165) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '62d68870c2b1c9a00b09dad082e89fa4') in 0.012395 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 0.000020 seconds.
+  path: Assets/Resources/Cards/ELEONOR, INSPIRADORA DE LA MORAL.jpg
+  artifactKey: Guid(e6f7cfa08ac2e31498ee00845405ccb3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/ELEONOR, INSPIRADORA DE LA MORAL.jpg using Guid(e6f7cfa08ac2e31498ee00845405ccb3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '10039666dd478ce80285e88e3d048e06') in 0.015065 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 0.158787 seconds.
+  path: Assets/Mirror/Examples/_Common/OpenGameArt/Sounds/The Good Fight (no intro).mp3
+  artifactKey: Guid(2a3e4950d211147bcba9d20e3689c7f6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Mirror/Examples/_Common/OpenGameArt/Sounds/The Good Fight (no intro).mp3 using Guid(2a3e4950d211147bcba9d20e3689c7f6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'e4290af423c20e5e582f1721bc54e8b1') in 0.063801 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 2
+========================================================================
+Received Import Request.
+  Time since last request: 0.653717 seconds.
+  path: Assets/Resources/Cards/ROJO FUGAZ.jpg
+  artifactKey: Guid(a3013b947879bb047bb37d901400f4df) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Cards/ROJO FUGAZ.jpg using Guid(a3013b947879bb047bb37d901400f4df) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '3597b7e68edb0ea44913b0290add8df0') in 0.014490 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3

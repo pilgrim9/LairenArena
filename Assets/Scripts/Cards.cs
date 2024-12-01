@@ -8,7 +8,7 @@ using StackObjects;
 public static class Cards
 { 
     public static Card getCardFromID(int id) {
-        return GameController.instance.cards[id];
+        return GameController.instance.gameState.cards[id];
     }
     [Serializable]
     public class Card : Stackable

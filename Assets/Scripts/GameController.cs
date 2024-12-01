@@ -7,14 +7,10 @@ using StackObjects;
 using UnityEngine;
 using Random = System.Random;
 using Card = Cards.Card;
-using kcp2k;
-using Edgegap.Editor.Api.Models.Results;
-
 
 public class GameController : NetworkBehaviour
 {
     public static GameController instance;
-    public List<Card> cards = new();
 
     [SerializeField] public GameObject CardViewPrefab;
     private void Awake()
@@ -143,8 +139,8 @@ public class GameController : NetworkBehaviour
 
     public Card NewCard(Card card, int playerId) {
         Card newCard = card.Clone();
-        newCard.InGameId = cards.Count;
-        cards.Add(newCard); 
+        newCard.InGameId = gameState.cards.Count;
+        gameState.cards.Add(newCard); 
         newCard.Owner = playerId;
         return newCard;
     }
@@ -450,10 +446,10 @@ public class GameController : NetworkBehaviour
     
     public IEnumerator MoveCard(int card, List<int> from, List<int> to)
     {
-        Debug.Log($"Attempting to move card {cards[card].Name} from {from.Count} cards to {to.Count} cards");
+        Debug.Log($"Attempting to move card {gameState.cards[card].Name} from {from.Count} cards to {to.Count} cards");
         if (!from.Contains(card))
         {
-            Debug.LogError($"Card {cards[card].Name} not found in source list!");
+            Debug.LogError($"Card {gameState.cards[card].Name} not found in source list!");
             yield break;
         }
 
@@ -479,7 +475,7 @@ public class GameController : NetworkBehaviour
         var attackers = attackingPlayer.Attackers;
         foreach (int attackerId in attackers)
         {
-            Card attacker = cards[attackerId];
+            Card attacker = gameState.cards[attackerId];
             if (attacker.Blockers.Count == 0)
             {
                 defendingPlayer.Life = (int)defendingPlayer.Life - (int)attacker.Power;
@@ -489,8 +485,8 @@ public class GameController : NetworkBehaviour
                 var blockers = attacker.Blockers;
                 foreach (int blockerId in blockers)
                 {
-                    cards[blockerId].Damage += attacker.Power;
-                    attacker.Damage += cards[blockerId].Damage;
+                    gameState.cards[blockerId].Damage += attacker.Power;
+                    attacker.Damage += gameState.cards[blockerId].Damage;
                 }
             }
         }

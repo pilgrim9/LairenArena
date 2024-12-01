@@ -21,14 +21,17 @@ public class CardView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         image.sprite = CardImageLoader.instance.GetSprite("CardBack");
     }
 
+
     public void Show()
     {
         isHidden = false;
         image.sprite = getCardImage();
+        
     }
 
     public Sprite getCardImage()
     {
+        if (cardData == null) Debug.Log("No card data");
         return CardImageLoader.instance.GetSprite(cardData.Name);
     }
 

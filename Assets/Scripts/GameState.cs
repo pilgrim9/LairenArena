@@ -7,6 +7,7 @@ using Unity.VisualScripting;
 [Serializable]
 public class GameState
 {
+    public List<Cards.Card> cards = new();
     public List<Player> Players = new();
     public int Turn;
     public int ActivePlayer;
