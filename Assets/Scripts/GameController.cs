@@ -46,6 +46,7 @@ public class GameController : NetworkBehaviour
 
     public int GetLocalPlayerId()
     {
+        Debug.Log("GetLocalPlayerId | isServer: " + isServer);
         if (isServer) // Host
             return 0;
         if (!isServer) // Client only
@@ -234,7 +235,7 @@ public class GameController : NetworkBehaviour
         player.ShuffleLibrary();
         
         // Draw new hand of 7
-        DrawCards(player, 7);
+        yield return DrawCards(player, 7);
         
         yield return null;
         yield return ServerSetDirty();
@@ -250,6 +251,7 @@ public class GameController : NetworkBehaviour
             Debug.Log("Waiting for " + player + " to select a card to put on bottom.");
             // Wait for player to select a card to put on bottom
             yield return new WaitUntil(() => player.SelectedCardIdForBottom != -1);
+            Debug.Log("Selected card to put on bottom: " + player.SelectedCardIdForBottom);
             yield return ServerSetDirty();
             // Move selected card to bottom of library
             yield return MoveCard(player.SelectedCardIdForBottom, player.Hand, player.Kingdom);
@@ -400,22 +402,16 @@ public class GameController : NetworkBehaviour
     {
         to.Add(cardId);
     }
-    public IEnumerator MoveCardTo(int card, List<int> from, List<int> to)
-    {
-        to.Add(from[from.IndexOf(card)]);
-        from.RemoveAt(from.IndexOf(card));
-        yield return ServerSetDirty();
-    }
     
-    private void DrawCards(Player player, int count)
+    private IEnumerator DrawCards(Player player, int count)
     {
         for (int i = 0; i < count; i++)
         {
-            DrawCard(player);
+            yield return DrawCard(player);
         }
     }
 
-    private void DrawCard(Player player)
+    private IEnumerator DrawCard(Player player)
     {
         if (player.Kingdom.Count == 0)
         {
@@ -424,6 +420,7 @@ public class GameController : NetworkBehaviour
 
         player.Hand.Add(player.Kingdom[0]);
         player.Kingdom.RemoveAt(0);
+        yield return null;
     }
 
     private void Lose(Player player)
@@ -452,23 +449,11 @@ public class GameController : NetworkBehaviour
             Debug.LogError($"Card {gameState.cards[card].Name} not found in source list!");
             yield break;
         }
-
-        int initialFromCount = from.Count;
-        int initialToCount = to.Count;
-        
         from.Remove(card);
         to.Add(card);
-        
-        Debug.Log($"Move complete - From: {initialFromCount}->{from.Count}, To: {initialToCount}->{to.Count}");
-        
-        if (from.Count != initialFromCount - 1 || to.Count != initialToCount + 1)
-        {
-            Debug.LogError("Card move operation did not complete as expected!");
-        }
-        
+
         yield return ServerSetDirty();
     }
-    
 
     private IEnumerator ApplyDamage(Player attackingPlayer, Player defendingPlayer)
     {
@@ -497,19 +482,19 @@ public class GameController : NetworkBehaviour
     {
         yield return MoveAll(gameState.GetActivePlayer().Paid, gameState.GetActivePlayer().Reserve);
         yield return MoveAll(gameState.GetActivePlayer().Attackers, gameState.GetActivePlayer().Regroup);
-    }
+    } 
     
-    
-    private IEnumerator Reveal()
-    {
-        if (gameState.GetActivePlayer().Reserve.Count >=7) yield break;
-        yield return MoveCardTo(gameState.GetActivePlayer().Reserve[0], gameState.GetActivePlayer().Vault, gameState.GetActivePlayer().Reserve);
+    private IEnumerator Reveal() {
+        if (gameState.GetActivePlayer().Reserve.Count >=7) {
+            Debug.Log("Reserve is full, skipping reveal phase."); // TODO, move flag to upkeep.
+            yield break;
+        }
+        yield return MoveCard(gameState.GetActivePlayer().Vault[0], gameState.GetActivePlayer().Vault, gameState.GetActivePlayer().Reserve);
     }
-    private void Draw()
-    {
+    private IEnumerator Draw() {
         if (!firstTurn)
         {
-            DrawCard(gameState.GetActivePlayer());
+            yield return DrawCard(gameState.GetActivePlayer());
         }
         else
         {
@@ -519,44 +504,46 @@ public class GameController : NetworkBehaviour
 
     private IEnumerator MainPhase1()
     {
-        yield return MainPhase();
+        yield return MainPhase(); //
     }      
     private IEnumerator MainPhase2()
     {
-        yield return  MainPhase();
+        yield return MainPhase(); //
     }    
     private IEnumerator MainPhase()
     {
-        yield return AwaitPriority();
+        yield return null;
     }    
-    private void CombatStart()
+    private IEnumerator CombatStart()
     {
-        
+        yield return null;
     }
-    public bool declaredAttackers;
 
     private IEnumerator DeclareAttackers()
     {
         Debug.Log("Waiting for " + gameState.GetActivePlayer() + " to declare attackers.");
-        yield return new WaitUntil(() => declaredAttackers);
+        gameState.GetActivePlayer().hasDeclaredAttack = false;
+        yield return new WaitUntil(() => gameState.GetActivePlayer().hasDeclaredAttack);
         yield return ServerSetDirty();
     }
 
-    public bool declaredBlockers;
     private IEnumerator DeclareBlockers()
     {
-        Debug.Log("Waiting for " + gameState.Players[gameState.ActivePlayer - 1] + " to declare blockers.");
-        yield return new WaitUntil(() => declaredBlockers);
+        Debug.Log("Waiting for " + gameState.GetInActivePlayer() + " to declare blockers.");
+        gameState.GetInActivePlayer().hasDeclaredBlock = false;
+        yield return new WaitUntil(() => gameState.GetInActivePlayer().hasDeclaredBlock);
         yield return ServerSetDirty();
     }
     
-    private void Damage()
+    private IEnumerator Damage()
     {
-        ApplyDamage(gameState.GetActivePlayer(), gameState.Players[gameState.ActivePlayer - 1]);
+        ApplyDamage(gameState.GetActivePlayer(), gameState.GetInActivePlayer());
+        yield return ServerSetDirty();
     }
 
-    private void EndPhase()
+    private IEnumerator EndPhase()
     {
+        yield return ServerSetDirty();
     }
 
     public int cardToDiscard = -1;
@@ -576,7 +563,6 @@ public class GameController : NetworkBehaviour
     // Coroutine for the game loop
     private IEnumerator GameLoop()
     {
-        
         Debug.Log("GameController | Starting game loop");
         // Main game loop
         while (true)
@@ -589,37 +575,48 @@ public class GameController : NetworkBehaviour
                     if (i != gameState.startingPlayer) continue;
                 }
                 gameState.ActivePlayer = i;
-                Untap();
+                Debug.Log($"Starting turn {i} for {gameState.GetActivePlayer()}");
 
+                Debug.Log("Entering Untap Phase");
+                yield return Untap();
                 yield return AwaitPriority();
 
-                Reveal();
+                Debug.Log("Entering Reveal Phase");
+                yield return Reveal();
                 yield return AwaitPriority();
                 
-                Draw();
+                Debug.Log("Entering Draw Phase");
+                yield return Draw();
                 yield return AwaitPriority();
 
+                Debug.Log("Entering Main Phase 1");
                 yield return MainPhase1();
                 yield return AwaitPriority();
-
-                CombatStart();
+                
+                Debug.Log("Entering Combat Phase");
+                yield return CombatStart();
                 // Combat phase
                 yield return AwaitPriority();
                 
+                Debug.Log("Entering Declare Attackers Phase");
                 yield return DeclareAttackers();
                 yield return AwaitPriority();
 
+                Debug.Log("Entering Declare Blockers Phase");
                 yield return DeclareBlockers();
                 yield return AwaitPriority();
 
+                Debug.Log("Entering Main Phase 2");
                 yield return MainPhase2();
                 yield return AwaitPriority();
 
-                EndPhase();
+                Debug.Log("Entering End Phase");
+                yield return EndPhase();
                 yield return AwaitPriority();
                 
+                Debug.Log("Entering Cleanup Phase");
                 yield return Cleanup();
-                // Wait for the next frame to simulate real-time play
+                // Wait for the next frame
                 yield return null;
             }
         }
@@ -638,6 +635,7 @@ public class GameController : NetworkBehaviour
     [Server]
     private IEnumerator ServerSetDirty()
     {
+        yield return null;
         UpdateGameState();
         SetDirty();
         yield return new WaitForSeconds(0.001f);

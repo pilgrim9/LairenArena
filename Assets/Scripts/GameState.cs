@@ -39,5 +39,7 @@ public class GameState
         };
     }
     public Player GetActivePlayer() => Players[ActivePlayer];
+    public Player GetInActivePlayer() => Players[ActivePlayer-1];
+    
     public Player GetPlayerWithPriority() => Players[playerWithPriority];
 }

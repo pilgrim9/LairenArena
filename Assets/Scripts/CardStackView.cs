@@ -9,7 +9,7 @@ public class CardStackView : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData){}
     public Zone zone;
-    [HideInInspector] public int Player;
+    public int Player;
     public bool IsHidden;
     public bool IsSingleStack;
     private Image image;
@@ -17,7 +17,8 @@ public class CardStackView : MonoBehaviour, IPointerClickHandler
 
     protected virtual int GetPlayer()
     {
-        return Player;
+        if (isOwner) return GameController.instance.GetLocalPlayerId();
+        return 1 - GameController.instance.GetLocalPlayerId();
     }
     GameObject cardViewPrefab;
     private void Awake()
@@ -55,7 +56,7 @@ public class CardStackView : MonoBehaviour, IPointerClickHandler
             
             CardView view = transform.GetChild(i).GetComponent<CardView>();
             if (i >= cardList.Count) {
-                view.Hide();
+                view.gameObject.SetActive(false);
                 continue;
             }
             Cards.Card card = Cards.getCardFromID(cardList[i]);

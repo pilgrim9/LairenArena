@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using Mirror;
 using StackObjects;
-using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
 using System.Linq;
 using Card = Cards.Card;
@@ -25,6 +24,8 @@ public class Player
     public StackItem AddToStack;
     public bool HasAddedToStack;
     public int AmountToPay;
+    public bool hasDeclaredAttack;
+    public bool hasDeclaredBlock;
     public bool PaymentCanceled;
     public bool CanStackSlowActions()
     {
@@ -50,7 +51,7 @@ public class Player
     public bool AwaitingMulliganDecision;
     public bool MulliganDecisionMade;
     public bool KeepHand;
-    public int mulliganCount = 1;
+    public int mulliganCount = 0;
 
     public bool AwaitingBottomDecision;
     public int CardsToBottom; 

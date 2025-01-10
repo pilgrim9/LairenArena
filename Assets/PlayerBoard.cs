@@ -10,8 +10,7 @@ public class PlayerBoard : MonoBehaviour
         cardStackViews = GetComponentsInChildren<CardStackView>();
         foreach (var cardStackView in cardStackViews)
         {
-            if (IsOwner) cardStackView.Player = GameController.instance.GetLocalPlayerId();
-            else cardStackView.Player = 1 - GameController.instance.GetLocalPlayerId();
+            cardStackView.isOwner = IsOwner;
         }
     }
 }

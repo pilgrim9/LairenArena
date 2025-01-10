@@ -1771,10 +1771,10 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0.1
-  cards: []
   CardViewPrefab: {fileID: 8975149112485958180, guid: 3af9175f0036f5f45986279fa6ae1d28, type: 3}
   firstTurn: 1
   gameState:
+    cards: []
     Players: []
     Turn: 0
     ActivePlayer: 0
