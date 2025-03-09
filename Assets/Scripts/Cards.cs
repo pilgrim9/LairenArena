@@ -26,6 +26,8 @@ public static class Cards
         public List<string> StaticAbilities = new();
         public List<string> TriggeredAbilities = new();
         public List<string> ActivatedAbilities = new();
+        public List<string> AdditionalCosts = new();
+
         public int Points = 0;
         public Zone OnResolutionTargetZone = Zone.Discard;
         public Zone currentZone;
@@ -75,10 +77,103 @@ public static class Cards
     public static Card ROJO_FUGAZ = new(){
         Name = "ROJO FUGAZ",
         Types = new List<string> {CardTypes.ALLY},
-        Subtypes = new List<string> {CardTypes.ANIMAL},
+        Subtypes = new List<string> {CreatureTypes.ANIMAL},
         Power = 2,
         Resistance = 2,
         Cost = 1,
-        StaticAbilities = new List<string> {"ROJO FUGAZ"},
+        StaticAbilities = new List<string> {"FRENZY"},
+    };
+    public static Card SOMBRA_DEL_DESIERTO = new(){
+        Name = "SOMBRA DEL DESIERTO",
+        Types = new List<string> {CardTypes.ALLY},
+        Subtypes = new List<string> {CreatureTypes.BRUJA, CreatureTypes.DESERTOR},
+        Power = 3,
+        Resistance = 3,
+        Cost = 2,
+    };
+    public static Card BRUJA_ELEMENTALISTA = new(){
+        Name = "BRUJA ELEMENTALISTA",
+        Types = new List<string> {CardTypes.ALLY},
+        Subtypes = new List<string> {CreatureTypes.BRUJA},
+        Supertypes = new List<string> {Supertypes.ROYALTY},
+        Power = 2,
+        Resistance = 3,
+        Cost = 2,
+    };
+    public static Card ANCIANA_MAESTRA = new(){
+        Name = "ANCIANA MAESTRA",
+        Types = new List<string> {CardTypes.ALLY},
+        Subtypes = new List<string> {CreatureTypes.BRUJA},
+        Power = 3,
+        Resistance = 4,
+        Cost = 5,
+    };
+    public static Card CUMULO_DE_HONGOS = new(){
+        Name = "CUMULO DE HONGOS",
+        Types = new List<string> {CardTypes.MONUMENT},
+        Cost = 1,
+    };
+    public static Card CIUDAD_EN_LLAMAS = new(){
+        Name = "CIUDAD EN LLAMAS",
+        Types = new List<string> {CardTypes.ORDER, CardTypes.FAST},
+        Cost = 3,
+    };
+    
+    public static Card MUERTE_INMINENTE = new(){
+        Name = "MUERTE INMINENTE",
+        Types = new List<string> {CardTypes.ORDER, CardTypes.FAST},
+        Cost = 1,
+        AdditionalCosts = new List<string> {Costs.Pay2Life}
+    };
+    public static Card PLANES_FRUSTRADOS = new(){
+        Name = "PLANES FRUSTRADOS",
+        Types = new List<string> {CardTypes.ORDER, CardTypes.FAST},
+        Cost = 2,
+    };
+    public static Card RITUAL_DE_NEGACION = new(){
+        Name = "RITUAL DE NEGACION",
+        Types = new List<string> {CardTypes.ORDER},
+        Cost = 1,
+        AdditionalCosts = new List<string> {Costs.DiscardACard}
+    };
+    public static Card LIDER_DE_LA_MANADA = new(){
+        Name = "LIDER DE LA MANADA",
+        Types = new List<string> {CardTypes.ALLY},
+        Subtypes = new List<string> {CreatureTypes.ANIMAL},
+        Power = 3,
+        Resistance = 3,
+        Cost = 2,
+    };
+    public static Card FELINO_DE_LA_MONTANA = new(){
+        Name = "FELINO DE LA MONTANA",
+        Types = new List<string> {CardTypes.ALLY},
+        Subtypes = new List<string> {CreatureTypes.ANIMAL},
+        Power = 1,
+        Resistance = 1,
+        Cost = 2,
+    };
+    public static Card GATITOS_DE_BRUJA = new(){
+        Name = "GATITOS DE BRUJA",
+        Types = new List<string> {CardTypes.ALLY},
+        Subtypes = new List<string> {CreatureTypes.ANIMAL, CreatureTypes.BRUJA},
+        Power = 1,
+        Resistance = 1,
+        Cost = 1,
+    };
+    public static Card CASCABUFALO = new(){
+        Name = "CASCABUFALO",
+        Types = new List<string> {CardTypes.ALLY},
+        Subtypes = new List<string> {CreatureTypes.ANIMAL},
+        Power = 1,
+        Resistance = 2,
+        Cost = 1,
+    };
+    public static Card NICOL_LA_APRENDIZ = new(){
+        Name = "NICOL LA APRENDIZ",
+        Types = new List<string> {CardTypes.ALLY},
+        Subtypes = new List<string> {CreatureTypes.BRUJA},
+        Power = 1,
+        Resistance = 2,
+        Cost = 2,
     };
 }

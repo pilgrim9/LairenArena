@@ -45,6 +45,8 @@ public class CardStackView : MonoBehaviour, IPointerClickHandler
             // if (_new.Players[GetPlayer()].GetZone(zone) == null || old.Players[GetPlayer()].GetZone(zone) == null) return;
             // if (_new.Players[GetPlayer()].GetZone(zone) == old.Players[GetPlayer()].GetZone(zone)) return;
         }
+        HandleCount(_new);
+        
         if (IsSingleStack)  {
             HandleSingleStackView(_new);
             return;
@@ -72,6 +74,11 @@ public class CardStackView : MonoBehaviour, IPointerClickHandler
         }
     }
 
+    public TMPro.TextMeshProUGUI countText;
+    private void HandleCount(GameState _new) {
+        if (countText == null) return;
+        countText.text = _new.Players[GetPlayer()].GetZone(zone).Count.ToString();
+    }
 
     private void NewCardView() {
         CardView view = Instantiate(cardViewPrefab).GetComponent<CardView>();

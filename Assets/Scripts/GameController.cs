@@ -480,18 +480,22 @@ public class GameController : NetworkBehaviour
 
     private IEnumerator Untap()
     {
+        gameState.currentPhase = Phase.Untap;
         yield return MoveAll(gameState.GetActivePlayer().Paid, gameState.GetActivePlayer().Reserve);
         yield return MoveAll(gameState.GetActivePlayer().Attackers, gameState.GetActivePlayer().Regroup);
     } 
     
     private IEnumerator Reveal() {
+        gameState.currentPhase = Phase.Reveal;
         if (gameState.GetActivePlayer().Reserve.Count >=7) {
             Debug.Log("Reserve is full, skipping reveal phase."); // TODO, move flag to upkeep.
             yield break;
         }
         yield return MoveCard(gameState.GetActivePlayer().Vault[0], gameState.GetActivePlayer().Vault, gameState.GetActivePlayer().Reserve);
     }
+
     private IEnumerator Draw() {
+        gameState.currentPhase = Phase.Draw;
         if (!firstTurn)
         {
             yield return DrawCard(gameState.GetActivePlayer());
@@ -504,10 +508,12 @@ public class GameController : NetworkBehaviour
 
     private IEnumerator MainPhase1()
     {
+        gameState.currentPhase = Phase.MainPhase1;
         yield return MainPhase(); //
     }      
     private IEnumerator MainPhase2()
     {
+        gameState.currentPhase = Phase.MainPhase2;
         yield return MainPhase(); //
     }    
     private IEnumerator MainPhase()
@@ -516,11 +522,14 @@ public class GameController : NetworkBehaviour
     }    
     private IEnumerator CombatStart()
     {
+        gameState.currentPhase = Phase.CombatStart;
         yield return null;
     }
 
     private IEnumerator DeclareAttackers()
     {
+        gameState.currentPhase = Phase.DeclareAttackers;
+
         Debug.Log("Waiting for " + gameState.GetActivePlayer() + " to declare attackers.");
         gameState.GetActivePlayer().hasDeclaredAttack = false;
         yield return new WaitUntil(() => gameState.GetActivePlayer().hasDeclaredAttack);
@@ -529,6 +538,7 @@ public class GameController : NetworkBehaviour
 
     private IEnumerator DeclareBlockers()
     {
+        gameState.currentPhase = Phase.DeclareBlockers;
         Debug.Log("Waiting for " + gameState.GetInActivePlayer() + " to declare blockers.");
         gameState.GetInActivePlayer().hasDeclaredBlock = false;
         yield return new WaitUntil(() => gameState.GetInActivePlayer().hasDeclaredBlock);
@@ -537,12 +547,14 @@ public class GameController : NetworkBehaviour
     
     private IEnumerator Damage()
     {
+        gameState.currentPhase = Phase.Damage;
         ApplyDamage(gameState.GetActivePlayer(), gameState.GetInActivePlayer());
         yield return ServerSetDirty();
     }
 
     private IEnumerator EndPhase()
     {
+        gameState.currentPhase = Phase.EndPhase;
         yield return ServerSetDirty();
     }
 
@@ -550,6 +562,7 @@ public class GameController : NetworkBehaviour
 
     private IEnumerator Cleanup()
     {
+        gameState.currentPhase = Phase.Cleanup;
         while (gameState.GetActivePlayer().Hand.Count > 7)
         {
             Debug.Log("Waiting for " + gameState.GetActivePlayer() + " to discard a card.");
@@ -604,6 +617,10 @@ public class GameController : NetworkBehaviour
 
                 Debug.Log("Entering Declare Blockers Phase");
                 yield return DeclareBlockers();
+                yield return AwaitPriority();
+
+                Debug.Log("Entering Damage Phase");
+                yield return Damage();
                 yield return AwaitPriority();
 
                 Debug.Log("Entering Main Phase 2");
