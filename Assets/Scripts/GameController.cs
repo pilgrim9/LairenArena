@@ -229,7 +229,7 @@ public class GameController : NetworkBehaviour
         player.mulliganCount++;
         
         // Return cards to library
-        yield return MoveAll(player.Hand, player.Kingdom);
+        yield return MoveAll(player.Hand, player.Kingdom, Zone.Kingdom);
         Debug.Log("Shuffling and drawing a new hand for " + player + "." + " Cards in hand: " + player.Hand.Count);
         // Shuffle
         player.ShuffleLibrary();
@@ -254,7 +254,7 @@ public class GameController : NetworkBehaviour
             Debug.Log("Selected card to put on bottom: " + player.SelectedCardIdForBottom);
             yield return ServerSetDirty();
             // Move selected card to bottom of library
-            yield return MoveCard(player.SelectedCardIdForBottom, player.Hand, player.Kingdom);
+            yield return MoveCard(player.SelectedCardIdForBottom, player.Hand, player.Kingdom, Zone.Kingdom);
             player.CardsToBottom--;
             player.SelectedCardIdForBottom = -1;
             yield return ServerSetDirty();
@@ -417,9 +417,10 @@ public class GameController : NetworkBehaviour
         {
             Lose(player);
         }
-
-        player.Hand.Add(player.Kingdom[0]);
+        int cardId = player.Kingdom[0];
+        player.Hand.Add(cardId);
         player.Kingdom.RemoveAt(0);
+        gameState.cards[cardId].currentZone = Zone.Hand;
         yield return null;
     }
 
@@ -430,18 +431,18 @@ public class GameController : NetworkBehaviour
     }
 
 
-    private IEnumerator MoveAll(List<int> from, List<int> to)
+    private IEnumerator MoveAll(List<int> from, List<int> to, Zone targetZone)
     {
         Debug.Log("Moving " + from.Count + " cards from " + from + " to " + to);
         List<int> cardsToMove = new List<int>(from); // Create a copy to avoid modification during iteration
         foreach (int cardId in cardsToMove) {
-            yield return MoveCard(cardId, from, to);
+            yield return MoveCard(cardId, from, to, targetZone);
         }
         yield return ServerSetDirty();
     }
     
     
-    public IEnumerator MoveCard(int card, List<int> from, List<int> to)
+    public IEnumerator MoveCard(int card, List<int> from, List<int> to, Zone targetZone)
     {
         Debug.Log($"Attempting to move card {gameState.cards[card].Name} from {from.Count} cards to {to.Count} cards");
         if (!from.Contains(card))
@@ -451,6 +452,8 @@ public class GameController : NetworkBehaviour
         }
         from.Remove(card);
         to.Add(card);
+
+        gameState.cards[card].currentZone = targetZone;
 
         yield return ServerSetDirty();
     }
@@ -481,8 +484,8 @@ public class GameController : NetworkBehaviour
     private IEnumerator Untap()
     {
         gameState.currentPhase = Phase.Untap;
-        yield return MoveAll(gameState.GetActivePlayer().Paid, gameState.GetActivePlayer().Reserve);
-        yield return MoveAll(gameState.GetActivePlayer().Attackers, gameState.GetActivePlayer().Regroup);
+        yield return MoveAll(gameState.GetActivePlayer().Paid, gameState.GetActivePlayer().Reserve, Zone.Reserve);
+        yield return MoveAll(gameState.GetActivePlayer().Attackers, gameState.GetActivePlayer().Regroup, Zone.Regroup);
     } 
     
     private IEnumerator Reveal() {
@@ -491,7 +494,7 @@ public class GameController : NetworkBehaviour
             Debug.Log("Reserve is full, skipping reveal phase."); // TODO, move flag to upkeep.
             yield break;
         }
-        yield return MoveCard(gameState.GetActivePlayer().Vault[0], gameState.GetActivePlayer().Vault, gameState.GetActivePlayer().Reserve);
+        yield return MoveCard(gameState.GetActivePlayer().Vault[0], gameState.GetActivePlayer().Vault, gameState.GetActivePlayer().Reserve, Zone.Reserve);
     }
 
     private IEnumerator Draw() {
@@ -540,6 +543,7 @@ public class GameController : NetworkBehaviour
     {
         gameState.currentPhase = Phase.DeclareBlockers;
         Debug.Log("Waiting for " + gameState.GetInActivePlayer() + " to declare blockers.");
+        if (gameState.GetActivePlayer().Attackers.Count == 0) yield break;
         gameState.GetInActivePlayer().hasDeclaredBlock = false;
         yield return new WaitUntil(() => gameState.GetInActivePlayer().hasDeclaredBlock);
         yield return ServerSetDirty();
@@ -567,7 +571,7 @@ public class GameController : NetworkBehaviour
         {
             Debug.Log("Waiting for " + gameState.GetActivePlayer() + " to discard a card.");
             yield return new WaitUntil(() => cardToDiscard != -1);
-            yield return MoveCard(cardToDiscard, gameState.GetActivePlayer().Hand, gameState.GetActivePlayer().Discard);
+            yield return MoveCard(cardToDiscard, gameState.GetActivePlayer().Hand, gameState.GetActivePlayer().Discard, Zone.Discard);
             cardToDiscard = -1;
             yield return ServerSetDirty();
         }
@@ -638,9 +642,6 @@ public class GameController : NetworkBehaviour
             }
         }
     }
-    
-    
-
 
     [SyncVar(hook = nameof(WantsToStackUpdated))] public StackItem wantsToStack;
 

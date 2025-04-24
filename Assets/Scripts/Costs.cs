@@ -9,10 +9,10 @@ public static class Costs {
     public class PayLife : Cost {}
     public class Discard : Cost {}
 
-    public static Dictionary<string,Cost> additionalCosts = new Dictionary<string,Cost>() {
-        { Pay2Life, new PayLife() { Amount = 2} },
-        { DiscardACard, new Discard() { Amount = 1} }    
-    };
+    // public static Dictionary<string,Cost> additionalCosts = new Dictionary<string,Cost>() {
+    //     { Pay2Life, new PayLife() { Amount = 2} },
+    //     { DiscardACard, new Discard() { Amount = 1} }    
+    // };
     public static Cost getResourceCost( int amount) {
         return new Cost() { Amount = amount };
     }

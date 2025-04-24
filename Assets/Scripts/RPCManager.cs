@@ -39,11 +39,22 @@ public class RPCManager : NetworkBehaviour
     {
         GameController.instance.wantsToStack = new StackItem(card); 
     }
+    public void RpcConfirmAttackers(int playerId) {
+        GameController.instance.gameState.Players[playerId].hasDeclaredAttack = true;
+    }
+    public void RPCConfirmBlockers(int playerId) {
+        GameController.instance.gameState.Players[playerId].hasDeclaredBlock = true;
+    }
+    [Command(requiresAuthority = false)]
+    public void RpcSelectAtacker (int card) {
+    }
 
     public void AcceptRpc()
     {
         RpcSyncPriorityPassed(GameController.instance.GetLocalPlayerId());
         RpcSyncMulliganDecision(true, GameController.instance.GetLocalPlayerId());
+        RpcConfirmAttackers(GameController.instance.GetLocalPlayerId());
+        RPCConfirmBlockers(GameController.instance.GetLocalPlayerId());
     }
     public void CancelRpc()
     {
