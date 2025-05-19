@@ -279,13 +279,21 @@ public class GameController : NetworkBehaviour
     
     public IEnumerator AddToStack(Player player, Stackable stackable)
     {
-        if (gameState.GetActivePlayer() != player) yield break; // Doesn't have priority
-        if (!CanStackSpeed(player, stackable)) yield break; // Can't cast at this speed.
-        if (stackable.IsCard() && player.CanPay((Card)stackable))
+        if (gameState.GetActivePlayer() != player)
         {
-            yield return player.MustPay(((Card)stackable).Cost);
-            if (player.PaymentCanceled) yield break;
+            Debug.Log("Player " + gameState.GetActivePlayer() + " is not active player.");
+            yield break; // Doesn't have priority  
         }
+        if (!CanStackSpeed(player, stackable))
+        {
+            Debug.Log("Player " + player + " cannot stack " + stackable + " at this speed.");
+            yield break; // Can't cast at this speed.
+        }
+        if (stackable.IsCard() && player.CanPay((Card)stackable))
+            {
+                yield return player.MustPay(((Card)stackable).Cost);
+                if (player.PaymentCanceled) yield break;
+            }
         player.HasAddedToStack = true;
         stackable.Caster = instance.gameState.Players.IndexOf(player);
         player.AddToStack = new StackItem(stackable);
@@ -308,6 +316,7 @@ public class GameController : NetworkBehaviour
 
             if (gameState.GetPlayerWithPriority().HasAddedToStack)
             {
+
                 // Add their action to the stack
                 gameState.TheStack.Add(gameState.GetPlayerWithPriority().AddToStack);
                 gameState.GetPlayerWithPriority().AddToStack = null;
@@ -643,13 +652,6 @@ public class GameController : NetworkBehaviour
         }
     }
 
-    [SyncVar(hook = nameof(WantsToStackUpdated))] public StackItem wantsToStack;
-
-    private void WantsToStackUpdated(StackItem old, StackItem _new)
-    {
-        if (_new == null) return;
-        if (!isClient) AddToStack(gameState.GetActivePlayer(), _new.getItem());
-    }
     [Server]
     private IEnumerator ServerSetDirty()
     {

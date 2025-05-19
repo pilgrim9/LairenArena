@@ -35,14 +35,18 @@ public class RPCManager : NetworkBehaviour
         GameController.instance.gameState.Players[playerId].HasPassedPriority = true;
     }
     [Command(requiresAuthority = false)]
-    public void RpcAddCardToStack(Cards.Card card)
+    public void RpcAddCardToStack(int cardId, int playerId)
     {
-        GameController.instance.wantsToStack = new StackItem(card); 
+        GameController.instance.AddToStack(GameController.instance.gameState.Players[playerId], Cards.getCardFromID(cardId));
     }
-    public void RpcConfirmAttackers(int playerId) {
+    [Command(requiresAuthority = false)]
+    public void RpcConfirmAttackers(int playerId)
+    {
         GameController.instance.gameState.Players[playerId].hasDeclaredAttack = true;
     }
-    public void RPCConfirmBlockers(int playerId) {
+    [Command(requiresAuthority = false)]
+    public void RPCConfirmBlockers(int playerId)
+    {
         GameController.instance.gameState.Players[playerId].hasDeclaredBlock = true;
     }
     [Command(requiresAuthority = false)]
@@ -59,5 +63,6 @@ public class RPCManager : NetworkBehaviour
     public void CancelRpc()
     {
         RpcSyncMulliganDecision(false, GameController.instance.GetLocalPlayerId());
+        //RpcCancelTargets(GameController.instance.GetLocalPlayerId());
     }
 }

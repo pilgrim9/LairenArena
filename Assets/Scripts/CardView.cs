@@ -66,7 +66,7 @@ public class CardView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         if (cardData.currentZone == Zone.Hand)
         {
             Debug.Log($"Attempting to play card {cardData.Name} from hand to stack");
-            RPCManager.instance.RpcAddCardToStack(cardData);
+            RPCManager.instance.RpcAddCardToStack(cardData.InGameId, GameController.instance.GetLocalPlayerId());
         }
         else
         {
