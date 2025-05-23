@@ -1,16 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Resources;
 using Mirror;
 using StackObjects;
-using Unity.VisualScripting;
 
 [Serializable]
 public class GameState
 {
+
+    public enum State
+    {
+        InProgress,
+        AwaitingPayment
+    }
+    public State state;
     public List<Cards.Card> cards = new();
     public List<Player> Players = new();
     public int Turn;
     public int ActivePlayer;
+
+    // TODO: ACA DEJASTE TENES QUE HACER QUE EL STACK ITEM SEA UN ID.
 
     public List<StackItem> TheStack = new();
     public int playerWithPriority;

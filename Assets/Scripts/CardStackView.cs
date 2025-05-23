@@ -20,6 +20,10 @@ public class CardStackView : MonoBehaviour, IPointerClickHandler
         if (isOwner) return GameController.instance.GetLocalPlayerId();
         return 1 - GameController.instance.GetLocalPlayerId();
     }
+    protected virtual List<int> GetCardList(GameState _new)
+    {
+        return  _new.Players[GetPlayer()].GetZone(zone);
+    }
     GameObject cardViewPrefab;
     private void Awake()
     {
@@ -51,11 +55,10 @@ public class CardStackView : MonoBehaviour, IPointerClickHandler
             HandleSingleStackView(_new);
             return;
         }
-        List<int> cardList = _new.Players[GetPlayer()].GetZone(zone);
+        List<int> cardList = GetCardList(_new);
         while (cardList.Count > transform.childCount) NewCardView();
         for (int i = 0; i < transform.childCount; i++)
         {
-            
             CardView view = transform.GetChild(i).GetComponent<CardView>();
             if (i >= cardList.Count) {
                 view.gameObject.SetActive(false);
@@ -77,7 +80,7 @@ public class CardStackView : MonoBehaviour, IPointerClickHandler
     public TMPro.TextMeshProUGUI countText;
     private void HandleCount(GameState _new) {
         if (countText == null) return;
-        countText.text = _new.Players[GetPlayer()].GetZone(zone).Count.ToString();
+        countText.text = GetCardList(_new).Count.ToString();
     }
 
     private void NewCardView() {
@@ -85,7 +88,7 @@ public class CardStackView : MonoBehaviour, IPointerClickHandler
         view.transform.SetParent(transform, false);
     }
     private void HandleSingleStackView(GameState _new) {
-        if (_new.Players[GetPlayer()].GetZone(zone).Count == 0)
+        if (GetCardList(_new).Count == 0)
         {
             image.sprite = null;
             image.color = Color.clear;

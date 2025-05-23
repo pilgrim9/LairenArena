@@ -13,11 +13,13 @@ public static class Cards
     [Serializable]
     public class Card : Stackable
     {
-       
+        public override int GetRelatedCard()
+        {
+            return InGameId;
+        }
         public List<string> Types = new();
         public List<string> Subtypes = new();
         public List<string> Supertypes = new();
-        public int InGameId = 0;
         public int Power = 0;
         public int Resistance = 0;
         public int Cost = 0;

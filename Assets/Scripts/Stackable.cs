@@ -13,6 +13,9 @@ namespace StackObjects
     [Serializable]
     public abstract class Stackable
     {
+        public int InGameId = -1;
+        public int RelatedCard = -1;
+        public virtual int GetRelatedCard() { return RelatedCard; }
         public string Name;
         public string speed = Speed.SLOW;
 
@@ -31,6 +34,7 @@ namespace StackObjects
     public class StackItem
     {
         public int InGameId = -1;
+        public Stackable stackable;
         public Cards.Card card;
         public Abilities.TriggeredAbility TriggeredAbility;
         public Abilities.ActivatedAbility ActivatedAbility;
@@ -45,6 +49,7 @@ namespace StackObjects
         public StackItem () {}
         public StackItem(Stackable StackThis)
         {
+            stackable = StackThis;
             if (StackThis.GetType() == typeof(Abilities.TriggeredAbility)) TriggeredAbility = (Abilities.TriggeredAbility)StackThis;
             if (StackThis.GetType() == typeof(Abilities.ActivatedAbility)) ActivatedAbility = (Abilities.ActivatedAbility)StackThis;
             if (StackThis.GetType() == typeof(Cards.Card)) card = (Cards.Card)StackThis;

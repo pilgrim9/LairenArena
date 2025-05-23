@@ -7,6 +7,7 @@ using StackObjects;
 using UnityEngine;
 using Random = System.Random;
 using Card = Cards.Card;
+using System.Threading.Tasks;
 
 public class GameController : NetworkBehaviour
 {
@@ -63,6 +64,8 @@ public class GameController : NetworkBehaviour
         return gameState.Players[1];
     }
     private Coroutine gameLoop;
+    private Coroutine cardPlayedValidator;
+    private Coroutine cardPaymentValidator;
 
     public CustomNetworkManager networkManager;
     public override void OnStartServer()
@@ -97,7 +100,7 @@ public class GameController : NetworkBehaviour
         Debug.Log("GameController | Beginning SetupGame");
         gameState = new GameState();
         gameState.Players = new List<Player>();  // Make sure this is initialized as a List
-        
+
         // Initialize both players
         for (int i = 0; i < 2; i++)
         {
@@ -113,15 +116,56 @@ public class GameController : NetworkBehaviour
 
         yield return ServerSetDirty();
         DetermineStartingPlayer();
-        
+
         yield return HandleMulligans();
         gameLoop = StartCoroutine(GameLoop());
+        cardPlayedValidator = StartCoroutine(ValidateCardPlayed());
+        cardPaymentValidator = StartCoroutine(ValidatePayments());
+    }
+
+    private IEnumerator ValidateCardPlayed()
+    {
+        while (true)
+        {
+            Debug.Log("GameController | ValidateCardPlayed");
+            yield return new WaitUntil(() => gameState.Players.Any(player => player.wantToStack > -1));
+            Debug.Log("GameController | ValidateCardPlayed - Player wants to stack");
+            foreach (Player player in gameState.Players)
+            {
+                Debug.Log($"Player {player} wants to stack {player.wantToStack}");
+                if (player.wantToStack > -1)
+                {
+                    Debug.Log($"Player {player} wants to stack {player.wantToStack}");
+                    yield return AddToStack(player, Cards.getCardFromID(player.wantToStack));
+                    player.wantToStack = -1;
+                    yield return ServerSetDirty();
+                }
+            }
+        }
+    }
+
+    private IEnumerator ValidatePayments()
+    {
+        while (true)
+        {
+            yield return new WaitUntil(() => gameState.Players.Any(player => player.wantsToPayWith > -1));
+            foreach (Player player in gameState.Players)
+            {
+                if (player.wantsToPayWith > -1)
+                {
+                    yield return MoveCard(player.wantsToPayWith, player.Reserve, player.Paid, Zone.Paid);
+                    player.AmountToPay -= 1;
+                    player.wantsToPayWith = -1;
+                    yield return ServerSetDirty();
+                }
+            }
+        }
     }
 
     public List<int> GetDeck(int playerId)
     {
         List<int> deck = new List<int>();
-        for (int i = 0; i < 45+playerId; i++)
+        for (int i = 0; i < 45 + playerId; i++)
         {
 
             deck.Add(NewCard(Cards.ROJO_FUGAZ, playerId).InGameId);
@@ -276,9 +320,11 @@ public class GameController : NetworkBehaviour
         }
         return true;
     }
-    
+
+    StackItem AddThisToStack;
     public IEnumerator AddToStack(Player player, Stackable stackable)
     {
+        Debug.Log("GameController | AddToStack | Player " + player + " is adding " + stackable + " to stack.");
         if (gameState.GetActivePlayer() != player)
         {
             Debug.Log("Player " + gameState.GetActivePlayer() + " is not active player.");
@@ -289,15 +335,25 @@ public class GameController : NetworkBehaviour
             Debug.Log("Player " + player + " cannot stack " + stackable + " at this speed.");
             yield break; // Can't cast at this speed.
         }
-        if (stackable.IsCard() && player.CanPay((Card)stackable))
-            {
-                yield return player.MustPay(((Card)stackable).Cost);
-                if (player.PaymentCanceled) yield break;
-            }
-        player.HasAddedToStack = true;
-        stackable.Caster = instance.gameState.Players.IndexOf(player);
-        player.AddToStack = new StackItem(stackable);
+        if (!player.CanPay((Card)stackable))
+        {
+            Debug.Log("Player " + player + " cannot pay to stack " + stackable);
+            yield break;
+        }
+        if (stackable.IsCard())
+        {
+            Debug.Log("Player " + player + " must pay to stack " + stackable);
+            yield return player.MustPay(((Card)stackable).Cost);
+            if (player.PaymentCanceled) yield break;
+            player.HasAddedToStack = true;
+            stackable.Caster = instance.gameState.Players.IndexOf(player);
+            player.Hand.Remove(stackable.InGameId);
+            Cards.getCardFromID(stackable.InGameId).currentZone = Zone.Stack;
+            AddThisToStack = new StackItem(stackable);
+        }
+
     }
+    
     // Add this method to handle priority passing
     private IEnumerator HandlePriority()
     {
@@ -310,18 +366,18 @@ public class GameController : NetworkBehaviour
             // Wait for the player with priority to make a decision
             WaitingForResponse = true;
             Debug.Log("Waiting for " + gameState.GetPlayerWithPriority() + " to make a decision.");
-            yield return new WaitUntil(() => 
-                gameState.GetPlayerWithPriority().HasPassedPriority || 
+            yield return new WaitUntil(() =>
+                gameState.GetPlayerWithPriority().HasPassedPriority ||
                 gameState.GetPlayerWithPriority().HasAddedToStack);
 
             if (gameState.GetPlayerWithPriority().HasAddedToStack)
             {
 
                 // Add their action to the stack
-                gameState.TheStack.Add(gameState.GetPlayerWithPriority().AddToStack);
-                gameState.GetPlayerWithPriority().AddToStack = null;
+                gameState.TheStack.Add(AddThisToStack);
+                AddThisToStack = null;
                 gameState.GetPlayerWithPriority().HasAddedToStack = false;
-                
+
                 // Start a new round of priority
                 gameState.playerWithPriority = gameState.ActivePlayer;
                 continue;
@@ -332,7 +388,7 @@ public class GameController : NetworkBehaviour
                 // Move priority to the next player
                 int currentIndex = gameState.playerWithPriority;
                 int nextIndex = (currentIndex + 1) % gameState.Players.Count;
-                
+
                 // If we're back to the active player and everyone passed
                 if (nextIndex == gameState.ActivePlayer && AllPlayersPassedPriority())
                 {
@@ -340,7 +396,7 @@ public class GameController : NetworkBehaviour
                     {
                         // Resolve the top of the stack
                         yield return ResolveTopOfStack();
-                        
+
                         // Start a new round of priority with active player
                         ResetPriorityPassed();
                         gameState.playerWithPriority = gameState.ActivePlayer;

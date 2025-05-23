@@ -1,6 +1,7 @@
 ﻿using Mirror;
 using StackObjects;
-
+using Unity.VisualScripting;
+using UnityEngine;
 public class RPCManager : NetworkBehaviour
 {
     public static RPCManager instance;
@@ -34,11 +35,32 @@ public class RPCManager : NetworkBehaviour
     {
         GameController.instance.gameState.Players[playerId].HasPassedPriority = true;
     }
+
+
     [Command(requiresAuthority = false)]
     public void RpcAddCardToStack(int cardId, int playerId)
     {
-        GameController.instance.AddToStack(GameController.instance.gameState.Players[playerId], Cards.getCardFromID(cardId));
+        Debug.Log("RpcAddCardToStack" + cardId);
+        GameController.instance.gameState.Players[playerId].wantToStack = cardId;
     }
+
+    [Command(requiresAuthority = false)]
+    public void RpcPay(int cardId, int playerId)
+    {
+        Debug.Log("RpcPay" + cardId);
+        GameController.instance.gameState.Players[playerId].wantsToPayWith = cardId;
+    }
+    [Command(requiresAuthority = false)]
+    public void RpcCancelPayment(int playerId)
+    {
+        GameController.instance.gameState.Players[playerId].PaymentCanceled = true;
+    }
+    [Command(requiresAuthority = false)]
+    public void RpcCancelTargets(int playerId)
+    {
+        GameController.instance.gameState.Players[playerId].TargetsCancelled = true;
+    }
+
     [Command(requiresAuthority = false)]
     public void RpcConfirmAttackers(int playerId)
     {
@@ -50,7 +72,9 @@ public class RPCManager : NetworkBehaviour
         GameController.instance.gameState.Players[playerId].hasDeclaredBlock = true;
     }
     [Command(requiresAuthority = false)]
-    public void RpcSelectAtacker (int card) {
+    public void RpcSelectAtacker(int playerId,int card)
+    {
+        GameController.instance.gameState.Players[playerId].wantsToAttackWith = card;
     }
 
     public void AcceptRpc()
@@ -63,6 +87,7 @@ public class RPCManager : NetworkBehaviour
     public void CancelRpc()
     {
         RpcSyncMulliganDecision(false, GameController.instance.GetLocalPlayerId());
-        //RpcCancelTargets(GameController.instance.GetLocalPlayerId());
+        RpcCancelTargets(GameController.instance.GetLocalPlayerId());
+        RpcCancelPayment(GameController.instance.GetLocalPlayerId());
     }
 }

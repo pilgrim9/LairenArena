@@ -56,6 +56,10 @@ public class CardView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
         Debug.Log($"Selected card {cardData.Name} for bottom of deck functionality");
         RPCManager.instance.RPCSelectCardForBottom(cardData.InGameId, GameController.instance.GetLocalPlayerId());
+        if (cardData.currentZone == Zone.Reserve)
+        {
+            RPCManager.instance.RpcPay(cardData.InGameId, GameController.instance.GetLocalPlayerId());
+        }
 
         if (!isPlayable)
         {

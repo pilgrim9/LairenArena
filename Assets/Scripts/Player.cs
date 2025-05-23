@@ -21,12 +21,19 @@ public class Player
     public List<int> Avernus = new();
     public int Life;
     public bool HasPassedPriority;
-    public StackItem AddToStack;
+    public int wantToStack = -1; 
+    public int wantsToPayWith = -1;
+    public int wantsToTarget = -1;
+    public int wantsToAttackWith = -1;
+    public int wantsToBlockWith = -1;
+    public int wantsToBlockTarget = -1;
+    public List<int> chosenTargets; 
     public bool HasAddedToStack;
     public int AmountToPay;
     public bool hasDeclaredAttack;
     public bool hasDeclaredBlock;
     public bool PaymentCanceled;
+    public bool TargetsCancelled;  
     public bool CanStackSlowActions()
     {
         return GameController.instance.gameState.GetActivePlayer() == this &&
@@ -45,7 +52,9 @@ public class Player
     {
         AmountToPay = cost;
         PaymentCanceled = false;
+        GameController.instance.gameState.state = GameState.State.AwaitingPayment;
         yield return new WaitUntil(() => AmountToPay == 0 || PaymentCanceled);
+        GameController.instance.gameState.state = GameState.State.InProgress;
     }
     // Add these new fields to your Player class
     public bool AwaitingMulliganDecision;
