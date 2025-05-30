@@ -14,14 +14,14 @@ namespace StackObjects
     public abstract class Stackable
     {
         public int InGameId = -1;
-        public int RelatedCard = -1;
+        protected int RelatedCard = -1;
         public virtual int GetRelatedCard() { return RelatedCard; }
-        public string Name;
+        public string Name = "";
         public string speed = Speed.SLOW;
 
-        [NonSerialized] public List<Abilities.ResolutionEffect> ResolutionEffects = new();
         public int Owner = -1;
         public int Caster = -1;
+        [NonSerialized] public List<Abilities.ResolutionEffect> ResolutionEffects = new();
 
         public bool IsCard()
         {
@@ -33,26 +33,25 @@ namespace StackObjects
     [Serializable]
     public class StackItem
     {
-        public int InGameId = -1;
-        public Stackable stackable;
-        public Cards.Card card;
-        public Abilities.TriggeredAbility TriggeredAbility;
-        public Abilities.ActivatedAbility ActivatedAbility;
+        public int card = -1;
+        public string TriggeredAbility = "";
+        public string ActivatedAbility = "";
+        [NonSerialized] public Stackable stackable;
+        public int RelatedCardId = -1;
 
-        public Stackable getItem()
+        public StackItem(int InGameId) 
         {
-            if (card != null) return card;
-            if (TriggeredAbility != null) return TriggeredAbility;
-            return ActivatedAbility;
+            card = InGameId;
+            stackable = Cards.getCardFromID(InGameId);
         }
-
-        public StackItem () {}
         public StackItem(Stackable StackThis)
         {
+
             stackable = StackThis;
-            if (StackThis.GetType() == typeof(Abilities.TriggeredAbility)) TriggeredAbility = (Abilities.TriggeredAbility)StackThis;
-            if (StackThis.GetType() == typeof(Abilities.ActivatedAbility)) ActivatedAbility = (Abilities.ActivatedAbility)StackThis;
-            if (StackThis.GetType() == typeof(Cards.Card)) card = (Cards.Card)StackThis;
+            if (StackThis.GetType() == typeof(Abilities.TriggeredAbility)) TriggeredAbility = StackThis.Name;
+            if (StackThis.GetType() == typeof(Abilities.ActivatedAbility)) ActivatedAbility = StackThis.Name;
+            if (StackThis.IsCard()) card = StackThis.InGameId;
+            RelatedCardId = StackThis.GetRelatedCard();
         }
     }
 }

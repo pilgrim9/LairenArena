@@ -7,7 +7,7 @@ public class StackStackView : CardStackView
         List<int> cards = new List<int>();
         for (int i = 0; i < _new.TheStack.Count; i++)
         {
-            cards.Add(_new.TheStack[i].stackable.GetRelatedCard());
+            cards.Add(_new.TheStack[i].RelatedCardId);
         }
         return cards;
     }

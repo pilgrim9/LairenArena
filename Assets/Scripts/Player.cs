@@ -52,9 +52,9 @@ public class Player
     {
         AmountToPay = cost;
         PaymentCanceled = false;
-        GameController.instance.gameState.state = GameState.State.AwaitingPayment;
+        GameController.instance.gameState.state = State.AwaitingPayment;
         yield return new WaitUntil(() => AmountToPay == 0 || PaymentCanceled);
-        GameController.instance.gameState.state = GameState.State.InProgress;
+        GameController.instance.gameState.state = State.InProgress;
     }
     // Add these new fields to your Player class
     public bool AwaitingMulliganDecision;

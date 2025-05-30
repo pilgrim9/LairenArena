@@ -1,6 +1,7 @@
 ﻿
 public enum Phase
 {
+    NoGame,
     Mulligan,
     Untap,
     Upkeep,

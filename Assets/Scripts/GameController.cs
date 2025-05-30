@@ -138,7 +138,6 @@ public class GameController : NetworkBehaviour
                     Debug.Log($"Player {player} wants to stack {player.wantToStack}");
                     yield return AddToStack(player, Cards.getCardFromID(player.wantToStack));
                     player.wantToStack = -1;
-                    yield return ServerSetDirty();
                 }
             }
         }
@@ -363,6 +362,7 @@ public class GameController : NetworkBehaviour
 
         while (roundOfPriority)
         {
+            yield return ServerSetDirty();
             // Wait for the player with priority to make a decision
             WaitingForResponse = true;
             Debug.Log("Waiting for " + gameState.GetPlayerWithPriority() + " to make a decision.");
@@ -436,7 +436,7 @@ public class GameController : NetworkBehaviour
     {
         if (gameState.TheStack.Count > 0)
         {
-            Stackable resolveThis = gameState.PopStack().getItem();
+            Stackable resolveThis = gameState.PopStack().stackable;
             foreach (var effect in resolveThis.ResolutionEffects)
             {
                 effect.Invoke(resolveThis);

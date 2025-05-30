@@ -3,27 +3,24 @@ using System.Collections.Generic;
 using System.Resources;
 using Mirror;
 using StackObjects;
+public enum State
+{
+    WaitingForPlayers,
+    InProgress,
+    AwaitingPayment
+}
 
 [Serializable]
 public class GameState
 {
-
-    public enum State
-    {
-        InProgress,
-        AwaitingPayment
-    }
-    public State state;
+    public State state = State.WaitingForPlayers;
     public List<Cards.Card> cards = new();
     public List<Player> Players = new();
     public int Turn;
     public int ActivePlayer;
-
-    // TODO: ACA DEJASTE TENES QUE HACER QUE EL STACK ITEM SEA UN ID.
-
     public List<StackItem> TheStack = new();
     public int playerWithPriority;
-    public Phase currentPhase;
+    public Phase currentPhase = Phase.NoGame;
     public bool firstTurn;
     public int startingPlayer;
 
