@@ -7,7 +7,6 @@ using StackObjects;
 using UnityEngine;
 using Random = System.Random;
 using Card = Cards.Card;
-using System.Threading.Tasks;
 
 public class GameController : NetworkBehaviour
 {
@@ -164,10 +163,10 @@ public class GameController : NetworkBehaviour
     public List<int> GetDeck(int playerId)
     {
         List<int> deck = new List<int>();
-        for (int i = 0; i < 45 + playerId; i++)
+        for (int i = 0; i < 45; i++)
         {
-
-            deck.Add(NewCard(Cards.ROJO_FUGAZ, playerId).InGameId);
+            deck.Add(NewCard(Decks.SampleDeck[i], playerId).InGameId);
+            // deck.Add(NewCard(Cards.ROJO_FUGAZ, playerId).InGameId);
         }
         return deck;
     }
@@ -437,11 +436,11 @@ public class GameController : NetworkBehaviour
         if (gameState.TheStack.Count > 0)
         {
             Stackable resolveThis = gameState.PopStack().stackable;
-            foreach (var effect in resolveThis.ResolutionEffects)
-            {
-                effect.Invoke(resolveThis);
-            }
-            
+            // foreach (var effect in resolveThis.ResolutionEffects)
+            // {
+                // effect.Invoke(resolveThis);
+            // }
+             
             if (resolveThis is Card card)
             {
                 ResolveCard(card);
@@ -459,13 +458,14 @@ public class GameController : NetworkBehaviour
 
     public void ResolveCard(Card card)
     {
-        MoveCardTo(card.InGameId, gameState.Players[card.Owner].GetZone(card.OnResolutionTargetZone));
+        MoveCardTo(card.InGameId, gameState.Players[card.Owner].GetZone(card.getResolutionTargetZone()));
     }
 
 
     public void MoveCardTo(int cardId, List<int> to)
     {
         to.Add(cardId);
+        gameState.cards[cardId].currentZone = Zone.Hand;
     }
     
     private IEnumerator DrawCards(Player player, int count)

@@ -39,7 +39,7 @@ public class Abilities
     public static void Play(Stackable self)
     {
         Cards.Card card = (Cards.Card)self;
-        GameController.instance.gameState.Players[card.Owner].GetZone(card.OnResolutionTargetZone).Add(card.InGameId);
+        GameController.instance.gameState.Players[card.Owner].GetZone(card.getResolutionTargetZone()).Add(card.InGameId);
     }
     
     public static void Discard(Stackable self)

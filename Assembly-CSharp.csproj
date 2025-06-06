@@ -76,6 +76,7 @@
     <Compile Include="Assets\Scripts\HandStackView.cs" />
     <Compile Include="Assets\Scripts\Choice.cs" />
     <Compile Include="Assets\Scripts\Targets.cs" />
+    <Compile Include="Assets\Scripts\Decks.cs" />
     <Compile Include="Assets\Scripts\MulliganUI.cs" />
     <Compile Include="Assets\FollowMouse.cs" />
     <Compile Include="Assets\PhaseIndicator.cs" />

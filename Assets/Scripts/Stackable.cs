@@ -21,8 +21,8 @@ namespace StackObjects
 
         public int Owner = -1;
         public int Caster = -1;
-        [NonSerialized] public List<Abilities.ResolutionEffect> ResolutionEffects = new();
-
+        [NonSerialized]
+        public List<Abilities.ResolutionEffect> ResolutionEffects = new();
         public bool IsCard()
         {
             return typeof(Cards.Card) == GetType();

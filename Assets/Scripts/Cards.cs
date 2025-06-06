@@ -31,7 +31,12 @@ public static class Cards
         public List<string> AdditionalCosts = new();
 
         public int Points = 0;
-        public Zone OnResolutionTargetZone = Zone.Discard;
+        Zone OnResolutionTargetZone = Zone.Discard;
+        public Zone getResolutionTargetZone()
+        {
+            if (Types.Contains(CardTypes.ALLY)) return Zone.Regroup;
+            else return OnResolutionTargetZone;
+        }
         public Zone currentZone;
         public List<Zone> PlayableFrom = new() { Zone.Hand };
         public int controller;
@@ -94,7 +99,7 @@ public static class Cards
         Cost = 2,
     };
     public static Card BRUJA_ELEMENTALISTA = new(){
-        Name = "BRUJA ELEMENTALISTA",
+        Name = "HECHICERA ELEMENTAL",
         Types = new List<string> {CardTypes.ALLY},
         Subtypes = new List<string> {CreatureTypes.BRUJA},
         Supertypes = new List<string> {Supertypes.ROYALTY},
@@ -147,7 +152,7 @@ public static class Cards
         Cost = 2,
     };
     public static Card FELINO_DE_LA_MONTANA = new(){
-        Name = "FELINO DE LA MONTANA",
+        Name = "FELINO DE LA MONTAÑA",
         Types = new List<string> {CardTypes.ALLY},
         Subtypes = new List<string> {CreatureTypes.ANIMAL},
         Power = 1,
@@ -171,7 +176,7 @@ public static class Cards
         Cost = 1,
     };
     public static Card NICOL_LA_APRENDIZ = new(){
-        Name = "NICOL LA APRENDIZ",
+        Name = "NICOL, LA APRENDIZ",
         Types = new List<string> {CardTypes.ALLY},
         Subtypes = new List<string> {CreatureTypes.BRUJA},
         Power = 1,
