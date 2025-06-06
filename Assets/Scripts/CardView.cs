@@ -53,12 +53,14 @@ public class CardView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             Debug.Log($"Card {cardData.Name} is hidden, ignoring click");
             return;
         }
-
-        Debug.Log($"Selected card {cardData.Name} for bottom of deck functionality");
-        RPCManager.instance.RPCSelectCardForBottom(cardData.InGameId, GameController.instance.GetLocalPlayerId());
         if (cardData.currentZone == Zone.Reserve)
         {
             RPCManager.instance.RpcPay(cardData.InGameId, GameController.instance.GetLocalPlayerId());
+        }
+        if (GameController.instance.gameState.currentPhase == Phase.Mulligan)
+        {
+            Debug.Log($"Selected card {cardData.Name} for bottom of deck functionality");
+            RPCManager.instance.RPCSelectCardForBottom(cardData.InGameId, GameController.instance.GetLocalPlayerId());
         }
 
         if (!isPlayable)
@@ -67,6 +69,16 @@ public class CardView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             return;
         }
 
+        if (cardData.currentZone == Zone.Regroup)
+        {
+            Debug.Log($"Attempting to play card {cardData.Name} from regroup to attack");
+            RPCManager.instance.RpcSelectAttacker(cardData.InGameId, GameController.instance.GetLocalPlayerId());
+        }
+        if (cardData.currentZone == Zone.Attackers)
+        {
+            Debug.Log($"Attempting to play card {cardData.Name} from regroup to attack");
+            RPCManager.instance.RpcSelectAttacker(cardData.InGameId, GameController.instance.GetLocalPlayerId());
+        }
         if (cardData.currentZone == Zone.Hand)
         {
             Debug.Log($"Attempting to play card {cardData.Name} from hand to stack");

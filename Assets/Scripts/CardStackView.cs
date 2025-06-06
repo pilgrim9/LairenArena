@@ -5,8 +5,6 @@ using UnityEngine.UI;
 
 public class CardStackView : MonoBehaviour, IPointerClickHandler
 {
-    private RectTransform _transform;
-
     public void OnPointerClick(PointerEventData eventData){}
     public Zone zone;
     public int Player;
@@ -33,11 +31,11 @@ public class CardStackView : MonoBehaviour, IPointerClickHandler
 
     private void Start()
     {
-        GameController.instance.GameStateUpdated += UpdateZone;
+        GameController.instance.GameStateUpdated += UpdateView;
         Debug.Log("Started CardStackView " + zone + " " + GetPlayer());
     }
     
-    void UpdateZone(GameState old, GameState _new)
+    void UpdateView(GameState old, GameState _new)
     {
 
         if (_new == null) return;

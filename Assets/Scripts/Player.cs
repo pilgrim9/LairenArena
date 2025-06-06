@@ -115,7 +115,7 @@ public class Player
             case Zone.Discard : return Discard;
             case Zone.Hand : return Hand;
             case Zone.Reserve : return Reserve;
-            default : return null;
+            default: return null;
         }   
     }
 }

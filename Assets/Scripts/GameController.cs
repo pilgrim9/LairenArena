@@ -7,6 +7,8 @@ using StackObjects;
 using UnityEngine;
 using Random = System.Random;
 using Card = Cards.Card;
+using UnityEngine.Scripting.APIUpdating;
+using Mirror.Examples.Common.Controllers.Player;
 
 public class GameController : NetworkBehaviour
 {
@@ -151,7 +153,7 @@ public class GameController : NetworkBehaviour
             {
                 if (player.wantsToPayWith > -1)
                 {
-                    yield return MoveCard(player.wantsToPayWith, player.Reserve, player.Paid, Zone.Paid);
+                    yield return MoveCard(player.wantsToPayWith, Zone.Paid);
                     player.AmountToPay -= 1;
                     player.wantsToPayWith = -1;
                     yield return ServerSetDirty();
@@ -165,7 +167,10 @@ public class GameController : NetworkBehaviour
         List<int> deck = new List<int>();
         for (int i = 0; i < 45; i++)
         {
-            deck.Add(NewCard(Decks.SampleDeck[i], playerId).InGameId);
+            Card newCard = NewCard(Decks.SampleDeck[i], playerId);
+            deck.Add(newCard.InGameId);
+            newCard.currentZone = Zone.Kingdom;
+
             // deck.Add(NewCard(Cards.ROJO_FUGAZ, playerId).InGameId);
         }
         return deck;
@@ -175,7 +180,9 @@ public class GameController : NetworkBehaviour
         List<int> deck = new List<int>();
         for (int i = 0; i < 15; i++)
         {
-            deck.Add(NewCard(Cards.TreasureGenerico, playerid).InGameId);
+            Card newCard = NewCard(Cards.TreasureGenerico, playerid);
+            deck.Add(newCard.InGameId);
+            newCard.currentZone = Zone.Vault;
         }
         return deck;
     }
@@ -296,7 +303,7 @@ public class GameController : NetworkBehaviour
             Debug.Log("Selected card to put on bottom: " + player.SelectedCardIdForBottom);
             yield return ServerSetDirty();
             // Move selected card to bottom of library
-            yield return MoveCard(player.SelectedCardIdForBottom, player.Hand, player.Kingdom, Zone.Kingdom);
+            yield return MoveCard(player.SelectedCardIdForBottom, Zone.Kingdom);
             player.CardsToBottom--;
             player.SelectedCardIdForBottom = -1;
             yield return ServerSetDirty();
@@ -398,6 +405,7 @@ public class GameController : NetworkBehaviour
 
                         // Start a new round of priority with active player
                         ResetPriorityPassed();
+
                         gameState.playerWithPriority = gameState.ActivePlayer;
                     }
                     else
@@ -443,7 +451,7 @@ public class GameController : NetworkBehaviour
              
             if (resolveThis is Card card)
             {
-                ResolveCard(card);
+                yield return ResolveCard(card);
             }
         }
         yield return null;
@@ -456,18 +464,21 @@ public class GameController : NetworkBehaviour
         yield return HandlePriority();
     }
 
-    public void ResolveCard(Card card)
+    public IEnumerator ResolveCard(Card card)
     {
-        MoveCardTo(card.InGameId, gameState.Players[card.Owner].GetZone(card.getResolutionTargetZone()));
+        yield return MoveCard(card.InGameId, card.getResolutionTargetZone());
     }
 
 
-    public void MoveCardTo(int cardId, List<int> to)
+
+    public IEnumerator MoveCard(int cardId, Zone targetZone)
     {
-        to.Add(cardId);
-        gameState.cards[cardId].currentZone = Zone.Hand;
+        Card card = Cards.getCardFromID(cardId);
+        List<int> from = card.getOwner().GetZone(card.currentZone);
+        List<int> to = card.getOwner().GetZone(targetZone);
+        yield return MoveCard(cardId, from, to, targetZone);
     }
-    
+
     private IEnumerator DrawCards(Player player, int count)
     {
         for (int i = 0; i < count; i++)
@@ -483,9 +494,7 @@ public class GameController : NetworkBehaviour
             Lose(player);
         }
         int cardId = player.Kingdom[0];
-        player.Hand.Add(cardId);
-        player.Kingdom.RemoveAt(0);
-        gameState.cards[cardId].currentZone = Zone.Hand;
+        yield return MoveCard(cardId, Zone.Hand);
         yield return null;
     }
 
@@ -499,25 +508,28 @@ public class GameController : NetworkBehaviour
     private IEnumerator MoveAll(List<int> from, List<int> to, Zone targetZone)
     {
         Debug.Log("Moving " + from.Count + " cards from " + from + " to " + to);
-        List<int> cardsToMove = new List<int>(from); // Create a copy to avoid modification during iteration
+        List<int> cardsToMove = new(from); 
         foreach (int cardId in cardsToMove) {
             yield return MoveCard(cardId, from, to, targetZone);
         }
         yield return ServerSetDirty();
     }
-    
+  
     
     public IEnumerator MoveCard(int card, List<int> from, List<int> to, Zone targetZone)
     {
-        Debug.Log($"Attempting to move card {gameState.cards[card].Name} from {from.Count} cards to {to.Count} cards");
-        if (!from.Contains(card))
+        Debug.Log($"Attempting to move card {gameState.cards[card].Name} from {from} cards to {to}");
+        if (from == null)
+        {
+            Debug.Log("GameController | Movecard | Card is in stack or, an unreegistered zone!");
+        }
+        else if (!from.Contains(card))
         {
             Debug.LogError($"Card {gameState.cards[card].Name} not found in source list!");
             yield break;
         }
         from.Remove(card);
         to.Add(card);
-
         gameState.cards[card].currentZone = targetZone;
 
         yield return ServerSetDirty();
@@ -559,7 +571,7 @@ public class GameController : NetworkBehaviour
             Debug.Log("Reserve is full, skipping reveal phase."); // TODO, move flag to upkeep.
             yield break;
         }
-        yield return MoveCard(gameState.GetActivePlayer().Vault[0], gameState.GetActivePlayer().Vault, gameState.GetActivePlayer().Reserve, Zone.Reserve);
+        yield return MoveCard(gameState.GetActivePlayer().Vault[0], Zone.Reserve);
     }
 
     private IEnumerator Draw() {
@@ -600,8 +612,25 @@ public class GameController : NetworkBehaviour
 
         Debug.Log("Waiting for " + gameState.GetActivePlayer() + " to declare attackers.");
         gameState.GetActivePlayer().hasDeclaredAttack = false;
-        yield return new WaitUntil(() => gameState.GetActivePlayer().hasDeclaredAttack);
-        yield return ServerSetDirty();
+        gameState.GetActivePlayer().wantsToAttackWith = -1;
+        while (gameState.GetActivePlayer().hasDeclaredAttack == false)
+        {
+            yield return new WaitUntil(() => gameState.GetActivePlayer().hasDeclaredAttack || gameState.GetActivePlayer().wantsToAttackWith != -1);
+            if (gameState.GetActivePlayer().wantsToAttackWith != -1)
+            {
+                int cardId = gameState.GetActivePlayer().wantsToAttackWith;
+                if (Cards.getCardFromID(cardId).currentZone == Zone.Attackers)
+                {
+                    yield return MoveCard(cardId, Zone.Regroup);
+                }
+                else if (Cards.getCardFromID(cardId).currentZone == Zone.Regroup)
+                {
+                    yield return MoveCard(cardId, Zone.Attackers);
+                }
+                gameState.GetActivePlayer().wantsToAttackWith = -1;
+            }
+            yield return ServerSetDirty();
+        } 
     }
 
     private IEnumerator DeclareBlockers()
@@ -617,7 +646,7 @@ public class GameController : NetworkBehaviour
     private IEnumerator Damage()
     {
         gameState.currentPhase = Phase.Damage;
-        ApplyDamage(gameState.GetActivePlayer(), gameState.GetInActivePlayer());
+        yield return ApplyDamage(gameState.GetActivePlayer(), gameState.GetInActivePlayer());
         yield return ServerSetDirty();
     }
 
@@ -636,7 +665,7 @@ public class GameController : NetworkBehaviour
         {
             Debug.Log("Waiting for " + gameState.GetActivePlayer() + " to discard a card.");
             yield return new WaitUntil(() => cardToDiscard != -1);
-            yield return MoveCard(cardToDiscard, gameState.GetActivePlayer().Hand, gameState.GetActivePlayer().Discard, Zone.Discard);
+            yield return MoveCard(cardToDiscard, Zone.Discard);
             cardToDiscard = -1;
             yield return ServerSetDirty();
         }

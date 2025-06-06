@@ -72,7 +72,7 @@ public class RPCManager : NetworkBehaviour
         GameController.instance.gameState.Players[playerId].hasDeclaredBlock = true;
     }
     [Command(requiresAuthority = false)]
-    public void RpcSelectAtacker(int playerId,int card)
+    public void RpcSelectAttacker(int playerId,int card)
     {
         GameController.instance.gameState.Players[playerId].wantsToAttackWith = card;
     }
