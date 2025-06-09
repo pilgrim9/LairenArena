@@ -19,6 +19,7 @@ Tests/*.apk
 # Generated files
 *.pidb
 *.pidb.meta
+*.log
 
 # OS files
 .DS_Store
