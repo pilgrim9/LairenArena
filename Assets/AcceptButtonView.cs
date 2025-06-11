@@ -13,7 +13,7 @@ public class AcceptButtonView : BasePlayerView
     public GameObject DeclineButton;
     protected override void UpdateView(GameState old, GameState _new)
     {
-        if (_new.ActivePlayer == GetPlayer())
+        if (_new.playerWithPriority == GetPlayer() || _new.currentPhase == Phase.Mulligan)
         {
             AcceptButton.SetActive(true);
             DeclineButton.SetActive(true);
@@ -23,6 +23,5 @@ public class AcceptButtonView : BasePlayerView
             AcceptButton.SetActive(false);
             DeclineButton.SetActive(false);
         }
-        // TODO: ACA
     }
 }

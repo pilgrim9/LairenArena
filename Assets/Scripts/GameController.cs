@@ -471,13 +471,6 @@ public class GameController : NetworkBehaviour
 
 
 
-    public IEnumerator MoveCard(int cardId, Zone targetZone)
-    {
-        Card card = Cards.getCardFromID(cardId);
-        List<int> from = card.getOwner().GetZone(card.currentZone);
-        List<int> to = card.getOwner().GetZone(targetZone);
-        yield return MoveCard(cardId, from, to, targetZone);
-    }
 
     private IEnumerator DrawCards(Player player, int count)
     {
@@ -516,6 +509,14 @@ public class GameController : NetworkBehaviour
     }
   
     
+    public IEnumerator MoveCard(int cardId, Zone targetZone)
+    {
+        Card card = Cards.getCardFromID(cardId);
+        List<int> from = card.getOwner().GetZone(card.currentZone);
+        List<int> to = card.getOwner().GetZone(targetZone);
+        yield return MoveCard(cardId, from, to, targetZone);
+    }
+
     public IEnumerator MoveCard(int card, List<int> from, List<int> to, Zone targetZone)
     {
         Debug.Log($"Attempting to move card {gameState.cards[card].Name} from {from} cards to {to}");
@@ -528,7 +529,7 @@ public class GameController : NetworkBehaviour
             Debug.LogError($"Card {gameState.cards[card].Name} not found in source list!");
             yield break;
         }
-        from.Remove(card);
+        from?.Remove(card);
         to.Add(card);
         gameState.cards[card].currentZone = targetZone;
 
@@ -609,15 +610,18 @@ public class GameController : NetworkBehaviour
     private IEnumerator DeclareAttackers()
     {
         gameState.currentPhase = Phase.DeclareAttackers;
-
-        Debug.Log("Waiting for " + gameState.GetActivePlayer() + " to declare attackers.");
+        Debug.Log("GameController | DeclareAttackers | Waiting for " + gameState.GetActivePlayer() + " to declare attackers.");
+        gameState.playerWithPriority = gameState.ActivePlayer;
         gameState.GetActivePlayer().hasDeclaredAttack = false;
         gameState.GetActivePlayer().wantsToAttackWith = -1;
+        yield return ServerSetDirty();
         while (gameState.GetActivePlayer().hasDeclaredAttack == false)
         {
+            Debug.Log("GameController | DeclareAttackers | Waiting for " + gameState.GetActivePlayer() + " to declare attackers OR add a new attacker.");
             yield return new WaitUntil(() => gameState.GetActivePlayer().hasDeclaredAttack || gameState.GetActivePlayer().wantsToAttackWith != -1);
             if (gameState.GetActivePlayer().wantsToAttackWith != -1)
             {
+                Debug.Log("GameController | DeclareAttackers | Player wants to attack with " + gameState.GetActivePlayer().wantsToAttackWith);
                 int cardId = gameState.GetActivePlayer().wantsToAttackWith;
                 if (Cards.getCardFromID(cardId).currentZone == Zone.Attackers)
                 {
@@ -706,7 +710,6 @@ public class GameController : NetworkBehaviour
                 
                 Debug.Log("Entering Combat Phase");
                 yield return CombatStart();
-                // Combat phase
                 yield return AwaitPriority();
                 
                 Debug.Log("Entering Declare Attackers Phase");

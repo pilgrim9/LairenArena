@@ -63,23 +63,17 @@ public class CardView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             RPCManager.instance.RPCSelectCardForBottom(cardData.InGameId, GameController.instance.GetLocalPlayerId());
         }
 
-        if (!isPlayable)
-        {
-            Debug.Log($"Card {cardData.Name} is not playable, ignoring play attempt");
-            return;
-        }
-
         if (cardData.currentZone == Zone.Regroup)
         {
-            Debug.Log($"Attempting to play card {cardData.Name} from regroup to attack");
+            Debug.Log($"Attempting to move card {cardData.Name} from regroup to attack");
             RPCManager.instance.RpcSelectAttacker(cardData.InGameId, GameController.instance.GetLocalPlayerId());
         }
         if (cardData.currentZone == Zone.Attackers)
         {
-            Debug.Log($"Attempting to play card {cardData.Name} from regroup to attack");
+            Debug.Log($"Attempting to move card {cardData.Name} from attack to regroup");
             RPCManager.instance.RpcSelectAttacker(cardData.InGameId, GameController.instance.GetLocalPlayerId());
         }
-        if (cardData.currentZone == Zone.Hand)
+        if (cardData.currentZone == Zone.Hand && isPlayable)
         {
             Debug.Log($"Attempting to play card {cardData.Name} from hand to stack");
             RPCManager.instance.RpcAddCardToStack(cardData.InGameId, GameController.instance.GetLocalPlayerId());
