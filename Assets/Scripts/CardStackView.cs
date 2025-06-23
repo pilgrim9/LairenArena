@@ -66,12 +66,8 @@ public class CardStackView : MonoBehaviour, IPointerClickHandler
             view.cardData = card;
             if (IsHidden) view.Hide(); 
             else view.Show();
-            
-            if (card.CanBePlayedBy(GetPlayer()) && 
-                card.CanBePlayedFrom(zone) && 
-                _new.Players[GetPlayer()].CanPay(card)) view.isPlayable = true; 
-            
-            if (card.CanActivateAbilities()) view.isPlayable = true;
+            view.UpdateView(old, _new);
+
         }
     }
 

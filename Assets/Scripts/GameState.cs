@@ -46,5 +46,6 @@ public class GameState
     }
     public Player GetActivePlayer() => Players[ActivePlayer];
     public Player GetInActivePlayer() => Players[1-ActivePlayer];
+    public int GetInActivePlayerID() => 1 - ActivePlayer;
     public Player GetPlayerWithPriority() => Players[playerWithPriority];
 }

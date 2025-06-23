@@ -29,6 +29,7 @@ public static class Cards
         public List<string> TriggeredAbilities = new();
         public List<string> ActivatedAbilities = new();
         public List<string> AdditionalCosts = new();
+        public int BlockingAttacker = -1;
 
         public int Points = 0;
         Zone OnResolutionTargetZone = Zone.Discard;
@@ -49,6 +50,13 @@ public static class Cards
         public bool CanBePlayedBy(int player)
         {
             return player == Owner;
+        }
+        public bool CanBePlayedByOwner()
+        {
+            bool canBePlayed = false;
+            if (speed == Speed.SLOW) canBePlayed = getOwner().CanStackSlowActions();
+            if (speed == Speed.FAST) canBePlayed = getOwner().CanStackFastActions();
+            return  canBePlayed && getOwner().CanPay(this) && CanBePlayedFrom(currentZone) ;
         }
 
         public List<int> getControllerZone()

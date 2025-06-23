@@ -6,14 +6,19 @@ public class CardView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public Cards.Card cardData;
     public Image image;
+    public Outline outline;
     private void Awake()
     {
-        image = GetComponent<Image>();
         Show();
     }
 
+    private void Start()
+    {
+        GameController.instance.GameStateUpdated += UpdateView;
+    }
+
     private bool isHidden = false;
-    public bool isPlayable = false;
+    public bool isPlayable => cardData.CanBePlayedByOwner();
 
     public void Hide()
     {
@@ -26,7 +31,7 @@ public class CardView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         isHidden = false;
         image.sprite = getCardImage();
-        
+
     }
 
     public Sprite getCardImage()
@@ -45,7 +50,7 @@ public class CardView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         if (isHidden) return;
         ZoomedCard.instance.setImage(null);
     }
-    
+
     public void OnPointerClick(PointerEventData eventData)
     {
         if (isHidden)
@@ -78,11 +83,43 @@ public class CardView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             Debug.Log($"Attempting to play card {cardData.Name} from hand to stack");
             RPCManager.instance.RpcAddCardToStack(cardData.InGameId, GameController.instance.GetLocalPlayerId());
         }
-        else
+        Debug.Log($"Card {cardData.Name} is in {cardData.currentZone} zone, checking for activated abilities");
+    }
+
+    public void UpdateView(GameState old, GameState _new)
+    {
+
+        if (_new == null) return;
+        outline.effectColor = Color.clear;
+        if (isHidden)
         {
-            Debug.Log($"Card {cardData.Name} is in {cardData.currentZone} zone, checking for activated abilities");
+            return;
+        }
+        // We only care about our cards for now
+        if (cardData.Owner != GameController.instance.GetLocalPlayerId()) return;
+
+        if (cardData.currentZone == Zone.Reserve && cardData.getOwner().AmountToPay > 0)
+        {
+            // highlight as usable
+            outline.effectColor = Color.yellow;
+            return;
+        }
+        if (GameController.instance.gameState.currentPhase == Phase.Mulligan)
+        {
+            outline.effectColor = Color.yellow;
+            return;
+        }
+
+        if (cardData.Owner == _new.ActivePlayer) {
+            if (_new.currentPhase == Phase.DeclareAttackers && (cardData.currentZone == Zone.Regroup || cardData.currentZone == Zone.Attackers))
+            {
+                outline.effectColor = Color.yellow;                
+            }
+        }
+
+        if (cardData.currentZone == Zone.Hand && (isPlayable || cardData.CanActivateAbilities()))
+        {
+            outline.effectColor = Color.yellow;
         }
     }
-    
- 
 }

@@ -36,12 +36,16 @@ public class Player
     public bool TargetsCancelled;  
     public bool CanStackSlowActions()
     {
-        return GameController.instance.gameState.GetActivePlayer() == this &&
+        return hasPriority() &&
                 new List<Phase> { Phase.MainPhase1, Phase.MainPhase2 }.Contains(GameController.instance.gameState.currentPhase);
+    }
+
+    public bool hasPriority() {
+        return GameController.instance.gameState.GetActivePlayer() == this;
     }
     public bool CanStackFastActions()
     {
-        return true;
+        return hasPriority();
     }
     public bool CanPay(Cards.Card card)
     {

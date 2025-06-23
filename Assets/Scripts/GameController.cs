@@ -7,8 +7,6 @@ using StackObjects;
 using UnityEngine;
 using Random = System.Random;
 using Card = Cards.Card;
-using UnityEngine.Scripting.APIUpdating;
-using Mirror.Examples.Common.Controllers.Player;
 
 public class GameController : NetworkBehaviour
 {
@@ -469,9 +467,6 @@ public class GameController : NetworkBehaviour
         yield return MoveCard(card.InGameId, card.getResolutionTargetZone());
     }
 
-
-
-
     private IEnumerator DrawCards(Player player, int count)
     {
         for (int i = 0; i < count; i++)
@@ -516,7 +511,6 @@ public class GameController : NetworkBehaviour
         List<int> to = card.getOwner().GetZone(targetZone);
         yield return MoveCard(cardId, from, to, targetZone);
     }
-
     public IEnumerator MoveCard(int card, List<int> from, List<int> to, Zone targetZone)
     {
         Debug.Log($"Attempting to move card {gameState.cards[card].Name} from {from} cards to {to}");
@@ -536,23 +530,45 @@ public class GameController : NetworkBehaviour
         yield return ServerSetDirty();
     }
 
+    public IEnumerator MoveCardToBlockers(int blockerId, int attackerId)
+    {
+        Card attacker = Cards.getCardFromID(attackerId);
+        Card blocker = Cards.getCardFromID(blockerId);
+        attacker.Blockers.Add(blockerId);
+        List<int> from = blocker.getOwner().GetZone(blocker.currentZone);
+        from.Remove(blockerId);
+        blocker.currentZone = Zone.Blockers;
+        blocker.BlockingAttacker = attackerId;
+        yield return ServerSetDirty();
+    }
+
+    public IEnumerator RemoveCardFromBlockers(int blockerId, int attackerId)
+    {
+        Card attacker = Cards.getCardFromID(attackerId);
+        Card blocker = Cards.getCardFromID(blockerId);
+        attacker.Blockers.Remove(blockerId);
+        blocker.BlockingAttacker = -1;
+        yield return MoveCard(blockerId, attacker.Blockers, attacker.getOwner().GetZone(Zone.Regroup), Zone.Regroup);
+    }
+
     private IEnumerator ApplyDamage(Player attackingPlayer, Player defendingPlayer)
     {
         var attackers = attackingPlayer.Attackers;
         foreach (int attackerId in attackers)
         {
-            Card attacker = gameState.cards[attackerId];
+            Card attacker = Cards.getCardFromID(attackerId);
             if (attacker.Blockers.Count == 0)
             {
-                defendingPlayer.Life = (int)defendingPlayer.Life - (int)attacker.Power;
+                defendingPlayer.Life -= attacker.Power;
             }
             else
             {
                 var blockers = attacker.Blockers;
                 foreach (int blockerId in blockers)
                 {
-                    gameState.cards[blockerId].Damage += attacker.Power;
-                    attacker.Damage += gameState.cards[blockerId].Damage;
+                    Card blocker = Cards.getCardFromID(blockerId);
+                    blocker.Damage += attacker.Power;
+                    attacker.Damage += blocker.Damage;
                 }
             }
         }
@@ -637,13 +653,45 @@ public class GameController : NetworkBehaviour
         } 
     }
 
+    private bool assignedABlocker() => (gameState.GetInActivePlayer().wantsToBlockWith != -1 && gameState.GetInActivePlayer().wantsToBlockTarget != -1);
+    private bool wantsToRemoveBlocker() => (gameState.GetInActivePlayer().wantsToBlockWith != -1 && Cards.getCardFromID(gameState.GetInActivePlayer().wantsToBlockWith).currentZone == Zone.Blockers);
     private IEnumerator DeclareBlockers()
     {
         gameState.currentPhase = Phase.DeclareBlockers;
-        Debug.Log("Waiting for " + gameState.GetInActivePlayer() + " to declare blockers.");
+        Debug.Log("GameController | DeclareBlockers | Waiting for " + gameState.GetInActivePlayer() + " to declare blockers.");
         if (gameState.GetActivePlayer().Attackers.Count == 0) yield break;
+        gameState.playerWithPriority = gameState.GetInActivePlayerID();
         gameState.GetInActivePlayer().hasDeclaredBlock = false;
-        yield return new WaitUntil(() => gameState.GetInActivePlayer().hasDeclaredBlock);
+        gameState.GetInActivePlayer().wantsToBlockWith = -1;
+        gameState.GetInActivePlayer().wantsToBlockTarget = -1;
+        yield return ServerSetDirty();
+        while (gameState.GetInActivePlayer().hasDeclaredBlock == false)
+        {
+            Debug.Log("GameController | DeclareBlockers | Waiting for " + gameState.GetInActivePlayer() + " to declare blockers.");
+            yield return new WaitUntil(() => gameState.GetInActivePlayer().hasDeclaredBlock || assignedABlocker() || wantsToRemoveBlocker());
+
+
+            if (assignedABlocker())
+            {
+                Debug.Log("GameController | DeclareBlockers | Player wants to block with " + gameState.GetInActivePlayer().wantsToBlockWith);
+                int blocker = gameState.GetInActivePlayer().wantsToBlockWith;
+                int attacker = gameState.GetInActivePlayer().wantsToBlockTarget;
+                yield return MoveCardToBlockers(blocker, attacker);
+                gameState.GetInActivePlayer().wantsToBlockWith = -1;
+                gameState.GetInActivePlayer().wantsToBlockTarget = -1;
+            }
+            if (wantsToRemoveBlocker())
+            {
+                Debug.Log("GameController | DeclareBlockers | Player wants to remove blocker with " + gameState.GetInActivePlayer().wantsToBlockWith);
+                int blocker = gameState.GetInActivePlayer().wantsToBlockWith;
+                int attacker = Cards.getCardFromID(blocker).BlockingAttacker;
+                yield return RemoveCardFromBlockers(blocker, attacker);
+                gameState.GetInActivePlayer().wantsToBlockWith = -1;
+                gameState.GetInActivePlayer().wantsToBlockTarget = -1;
+            }
+            yield return ServerSetDirty();
+        }
+
         yield return ServerSetDirty();
     }
     

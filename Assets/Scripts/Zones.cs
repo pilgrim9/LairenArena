@@ -11,5 +11,6 @@ public enum Zone
     Regroup,
     Discard,
     Avernus,
-    Stack
+    Stack,
+    Blockers
 }
