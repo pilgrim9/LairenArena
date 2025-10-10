@@ -24,10 +24,17 @@ public class PhaseIndicator : MonoBehaviour
     private void OnGameStateUpdated(GameState old, GameState _new)
     {
         if (old != null && _new.currentPhase == old.currentPhase) return;
-        text.text = _new.currentPhase.ToString();
+        if (_new.currentPhase == Phase.GameEnded)
+        {
+            text.text = "Winner is Player" + _new.winner; 
+        }
+        else
+        {
+            text.text = _new.currentPhase.ToString();
+            Invoke(nameof(Disable), 1.5f);
+        }
         text.enabled = true;
         image.enabled = true;
-        Invoke(nameof(Disable), 1.5f);
     }
     
 

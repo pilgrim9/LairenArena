@@ -23,6 +23,7 @@ public class GameState
     public Phase currentPhase = Phase.NoGame;
     public bool firstTurn;
     public int startingPlayer;
+    public int winner;
 
     public StackItem PopStack()
     {

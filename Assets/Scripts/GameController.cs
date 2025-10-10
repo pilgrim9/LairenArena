@@ -94,6 +94,7 @@ public class GameController : NetworkBehaviour
 
     public bool WaitingForResponse { get; private set; }
 
+    public int STARTING_LIFE = 20;
     private IEnumerator SetupGame()
     {
         Debug.Log("GameController | Beginning SetupGame");
@@ -105,15 +106,17 @@ public class GameController : NetworkBehaviour
         {
             Player player = new Player
             {
+                PlayerId = i,
                 Hand = new(),
                 Kingdom = GetDeck(i),
-                Vault = GetVault(i)
+                Vault = GetVault(i),
+                Life = STARTING_LIFE,
             };
             gameState.Players.Add(player);
             Debug.Log($"Initialized player {i} with deck size: {player.Kingdom.Count}");
         }
 
-        yield return ServerSetDirty();
+        yield return Propagate();
         DetermineStartingPlayer();
 
         yield return HandleMulligans();
@@ -154,7 +157,7 @@ public class GameController : NetworkBehaviour
                     yield return MoveCard(player.wantsToPayWith, Zone.Paid);
                     player.AmountToPay -= 1;
                     player.wantsToPayWith = -1;
-                    yield return ServerSetDirty();
+                    yield return Propagate();
                 }
             }
         }
@@ -267,7 +270,7 @@ public class GameController : NetworkBehaviour
 
         player.AwaitingMulliganDecision = false;
         player.MulliganDecisionMade = false;
-        yield return ServerSetDirty();
+        yield return Propagate();
     }
 
     private IEnumerator PerformMulligan(Player player)
@@ -285,7 +288,7 @@ public class GameController : NetworkBehaviour
         yield return DrawCards(player, 7);
         
         yield return null;
-        yield return ServerSetDirty();
+        yield return Propagate();
     }
 
     private IEnumerator AwaitBottomCards(Player player, int cardsToBottom)
@@ -299,15 +302,15 @@ public class GameController : NetworkBehaviour
             // Wait for player to select a card to put on bottom
             yield return new WaitUntil(() => player.SelectedCardIdForBottom != -1);
             Debug.Log("Selected card to put on bottom: " + player.SelectedCardIdForBottom);
-            yield return ServerSetDirty();
+            yield return Propagate();
             // Move selected card to bottom of library
             yield return MoveCard(player.SelectedCardIdForBottom, Zone.Kingdom);
             player.CardsToBottom--;
             player.SelectedCardIdForBottom = -1;
-            yield return ServerSetDirty();
+            yield return Propagate();
         }
         player.AwaitingBottomDecision = false;
-        yield return ServerSetDirty();
+        yield return Propagate();
     }
 
     # endregion
@@ -356,7 +359,7 @@ public class GameController : NetworkBehaviour
         }
 
     }
-    
+
     // Add this method to handle priority passing
     private IEnumerator HandlePriority()
     {
@@ -366,7 +369,8 @@ public class GameController : NetworkBehaviour
 
         while (roundOfPriority)
         {
-            yield return ServerSetDirty();
+            yield return UpdateStateBasedEffects();
+            yield return Propagate();
             // Wait for the player with priority to make a decision
             WaitingForResponse = true;
             Debug.Log("Waiting for " + gameState.GetPlayerWithPriority() + " to make a decision.");
@@ -424,6 +428,21 @@ public class GameController : NetworkBehaviour
         }
     }
 
+    private IEnumerator UpdateStateBasedEffects()
+    {
+        // layer effects an other rule problems go here
+        yield return null;
+        // players win or lose
+        foreach (Player player in gameState.Players)
+        {
+            if (player.Life <= 0)
+            {
+                yield return Lose(player);
+            }
+        }
+    }
+
+
     private bool AllPlayersPassedPriority()
     {
         return gameState.Players.All(p => p.HasPassedPriority);
@@ -457,7 +476,7 @@ public class GameController : NetworkBehaviour
 
     private IEnumerator AwaitPriority()
     {
-        yield return ServerSetDirty();
+        yield return Propagate();
         ResetPriorityPassed();
         yield return HandlePriority();
     }
@@ -479,17 +498,27 @@ public class GameController : NetworkBehaviour
     {
         if (player.Kingdom.Count == 0)
         {
-            Lose(player);
+            yield return Lose(player);
         }
         int cardId = player.Kingdom[0];
         yield return MoveCard(cardId, Zone.Hand);
         yield return null;
     }
 
-    private void Lose(Player player)
+    private IEnumerator Lose(Player player)
     {
         StopCoroutine(gameLoop);
         Debug.Log("Player loses!");
+        player.lost = true;
+
+        // The other player wins
+        foreach (Player otherPlayer in gameState.Players)
+        {
+            if (otherPlayer == player) continue;
+            gameState.winner = otherPlayer.PlayerId;
+        }
+        gameState.currentPhase = Phase.GameEnded;
+        yield return Propagate();
     }
 
 
@@ -500,7 +529,7 @@ public class GameController : NetworkBehaviour
         foreach (int cardId in cardsToMove) {
             yield return MoveCard(cardId, from, to, targetZone);
         }
-        yield return ServerSetDirty();
+        yield return Propagate();
     }
   
     
@@ -527,7 +556,7 @@ public class GameController : NetworkBehaviour
         to.Add(card);
         gameState.cards[card].currentZone = targetZone;
 
-        yield return ServerSetDirty();
+        yield return Propagate();
     }
 
     public IEnumerator MoveCardToBlockers(int blockerId, int attackerId)
@@ -539,7 +568,7 @@ public class GameController : NetworkBehaviour
         from.Remove(blockerId);
         blocker.currentZone = Zone.Blockers;
         blocker.BlockingAttacker = attackerId;
-        yield return ServerSetDirty();
+        yield return Propagate();
     }
 
     public IEnumerator RemoveCardFromBlockers(int blockerId, int attackerId)
@@ -572,7 +601,7 @@ public class GameController : NetworkBehaviour
                 }
             }
         }
-        yield return ServerSetDirty();
+        yield return Propagate();
     }
 
     private IEnumerator Untap()
@@ -606,7 +635,7 @@ public class GameController : NetworkBehaviour
     private IEnumerator MainPhase1()
     {
         gameState.currentPhase = Phase.MainPhase1;
-        yield return MainPhase(); //
+        yield return MainPhase(); 
     }      
     private IEnumerator MainPhase2()
     {
@@ -630,7 +659,7 @@ public class GameController : NetworkBehaviour
         gameState.playerWithPriority = gameState.ActivePlayer;
         gameState.GetActivePlayer().hasDeclaredAttack = false;
         gameState.GetActivePlayer().wantsToAttackWith = -1;
-        yield return ServerSetDirty();
+        yield return Propagate();
         while (gameState.GetActivePlayer().hasDeclaredAttack == false)
         {
             Debug.Log("GameController | DeclareAttackers | Waiting for " + gameState.GetActivePlayer() + " to declare attackers OR add a new attacker.");
@@ -649,7 +678,7 @@ public class GameController : NetworkBehaviour
                 }
                 gameState.GetActivePlayer().wantsToAttackWith = -1;
             }
-            yield return ServerSetDirty();
+            yield return Propagate();
         } 
     }
 
@@ -659,12 +688,12 @@ public class GameController : NetworkBehaviour
     {
         gameState.currentPhase = Phase.DeclareBlockers;
         Debug.Log("GameController | DeclareBlockers | Waiting for " + gameState.GetInActivePlayer() + " to declare blockers.");
-        if (gameState.GetActivePlayer().Attackers.Count == 0) yield break;
+        if (gameState.GetActivePlayer().Attackers.Count == 0 || gameState.GetInActivePlayer().Attackers.Count == 0) yield break;
         gameState.playerWithPriority = gameState.GetInActivePlayerID();
         gameState.GetInActivePlayer().hasDeclaredBlock = false;
         gameState.GetInActivePlayer().wantsToBlockWith = -1;
         gameState.GetInActivePlayer().wantsToBlockTarget = -1;
-        yield return ServerSetDirty();
+        yield return Propagate();
         while (gameState.GetInActivePlayer().hasDeclaredBlock == false)
         {
             Debug.Log("GameController | DeclareBlockers | Waiting for " + gameState.GetInActivePlayer() + " to declare blockers.");
@@ -689,23 +718,23 @@ public class GameController : NetworkBehaviour
                 gameState.GetInActivePlayer().wantsToBlockWith = -1;
                 gameState.GetInActivePlayer().wantsToBlockTarget = -1;
             }
-            yield return ServerSetDirty();
+            yield return Propagate();
         }
 
-        yield return ServerSetDirty();
+        yield return Propagate();
     }
     
     private IEnumerator Damage()
     {
         gameState.currentPhase = Phase.Damage;
         yield return ApplyDamage(gameState.GetActivePlayer(), gameState.GetInActivePlayer());
-        yield return ServerSetDirty();
+        yield return Propagate();
     }
 
     private IEnumerator EndPhase()
     {
         gameState.currentPhase = Phase.EndPhase;
-        yield return ServerSetDirty();
+        yield return Propagate();
     }
 
     public int cardToDiscard = -1;
@@ -719,7 +748,7 @@ public class GameController : NetworkBehaviour
             yield return new WaitUntil(() => cardToDiscard != -1);
             yield return MoveCard(cardToDiscard, Zone.Discard);
             cardToDiscard = -1;
-            yield return ServerSetDirty();
+            yield return Propagate();
         }
     }
 
@@ -789,7 +818,7 @@ public class GameController : NetworkBehaviour
     }
 
     [Server]
-    private IEnumerator ServerSetDirty()
+    private IEnumerator Propagate()
     {
         yield return null;
         UpdateGameState();

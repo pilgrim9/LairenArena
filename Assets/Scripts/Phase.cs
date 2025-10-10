@@ -14,6 +14,7 @@ public enum Phase
     Damage,
     MainPhase2,
     EndPhase,
-    Cleanup
+    Cleanup,
+    GameEnded,
 }
 

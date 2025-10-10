@@ -6,10 +6,12 @@ using StackObjects;
 using UnityEngine;
 using System.Linq;
 using Card = Cards.Card;
+using Mirror.BouncyCastle.Bcpg;
 
 [Serializable]
 public class Player
 {
+    public int PlayerId;
     public List<int> Hand = new();
     public List<int> Kingdom = new();
     public List<int> Reserve = new();
@@ -33,7 +35,8 @@ public class Player
     public bool hasDeclaredAttack;
     public bool hasDeclaredBlock;
     public bool PaymentCanceled;
-    public bool TargetsCancelled;  
+    public bool TargetsCancelled;
+    public bool lost = false; 
     public bool CanStackSlowActions()
     {
         return hasPriority() &&

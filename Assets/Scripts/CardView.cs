@@ -104,7 +104,7 @@ public class CardView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             outline.effectColor = Color.yellow;
             return;
         }
-        if (GameController.instance.gameState.currentPhase == Phase.Mulligan)
+        if (GameController.instance.gameState.currentPhase == Phase.Mulligan && cardData.getOwner().AwaitingBottomDecision)
         {
             outline.effectColor = Color.yellow;
             return;
