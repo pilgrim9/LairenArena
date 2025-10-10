@@ -72,6 +72,7 @@
     <Compile Include="Assets\MirrorPlayer.cs" />
     <Compile Include="Assets\Scripts\CardView.cs" />
     <Compile Include="Assets\Scripts\Phase.cs" />
+    <Compile Include="Assets\BlockersStackView.cs" />
     <Compile Include="Assets\Scripts\CardTypes.cs" />
     <Compile Include="Assets\Scripts\Abilities.cs" />
     <Compile Include="Assets\Scripts\HandStackView.cs" />
@@ -87,6 +88,7 @@
     <Compile Include="Assets\PlayerBoard.cs" />
     <Compile Include="Assets\Scripts\Costs.cs" />
     <Compile Include="Assets\Scripts\CardImageLoader.cs" />
+    <Compile Include="Assets\YieldThroughButton.cs" />
     <Compile Include="Assets\Scripts\FaceUpCardPile.cs" />
     <Compile Include="Assets\Scripts\Stackable.cs" />
     <Compile Include="Assets\Scripts\CreatureTypes.cs" />

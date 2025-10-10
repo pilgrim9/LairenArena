@@ -76,6 +76,17 @@ public class RPCManager : NetworkBehaviour
     {
         GameController.instance.gameState.Players[playerId].wantsToAttackWith = card;
     }
+    [Command(requiresAuthority = false)]
+    public void RpcSelectBlocker(int card, int playerId)
+    {
+        GameController.instance.gameState.Players[playerId].wantsToBlockWith = card;
+    }
+    [Command(requiresAuthority = false)]
+    public void RpcSelectBlockTarget(int card, int playerId)
+    {
+        GameController.instance.gameState.Players[playerId].wantsToBlockTarget = card;
+    }
+
 
     public void AcceptRpc()
     {
@@ -89,5 +100,12 @@ public class RPCManager : NetworkBehaviour
         RpcSyncMulliganDecision(false, GameController.instance.GetLocalPlayerId());
         RpcCancelTargets(GameController.instance.GetLocalPlayerId());
         RpcCancelPayment(GameController.instance.GetLocalPlayerId());
+    }
+
+    [Command(requiresAuthority = false)]
+    public void YieldThroughRpc(bool value, int playerId)
+    {
+        GameController.instance.gameState.Players[playerId].autoSkip = value;
+
     }
 }

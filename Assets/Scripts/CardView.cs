@@ -1,3 +1,4 @@
+using Mirror;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -72,16 +73,29 @@ public class CardView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         {
             Debug.Log($"Attempting to move card {cardData.Name} from regroup to attack");
             RPCManager.instance.RpcSelectAttacker(cardData.InGameId, GameController.instance.GetLocalPlayerId());
+            RPCManager.instance.RpcSelectBlocker(cardData.InGameId, GameController.instance.GetLocalPlayerId());
         }
         if (cardData.currentZone == Zone.Attackers)
         {
-            Debug.Log($"Attempting to move card {cardData.Name} from attack to regroup");
-            RPCManager.instance.RpcSelectAttacker(cardData.InGameId, GameController.instance.GetLocalPlayerId());
+            if (cardData.IsOwnerLocal())
+            {
+                Debug.Log($"Attempting to move card {cardData.Name} from attack to regroup");
+                RPCManager.instance.RpcSelectAttacker(cardData.InGameId, GameController.instance.GetLocalPlayerId());
+            } 
+            else
+            {
+                Debug.Log($"Slected card {cardData.Name} as block target.");
+                RPCManager.instance.RpcSelectBlockTarget(cardData.InGameId, GameController.instance.GetLocalPlayerId());
+            }
         }
         if (cardData.currentZone == Zone.Hand && isPlayable)
         {
             Debug.Log($"Attempting to play card {cardData.Name} from hand to stack");
             RPCManager.instance.RpcAddCardToStack(cardData.InGameId, GameController.instance.GetLocalPlayerId());
+        }
+        if (cardData.currentZone == Zone.Blockers)
+        {
+            RPCManager.instance.RpcSelectBlocker(cardData.InGameId, GameController.instance.GetLocalPlayerId());
         }
         Debug.Log($"Card {cardData.Name} is in {cardData.currentZone} zone, checking for activated abilities");
     }
@@ -110,10 +124,19 @@ public class CardView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             return;
         }
 
-        if (cardData.Owner == _new.ActivePlayer) {
+        if (cardData.Owner == _new.ActivePlayer)
+        {
             if (_new.currentPhase == Phase.DeclareAttackers && (cardData.currentZone == Zone.Regroup || cardData.currentZone == Zone.Attackers))
             {
-                outline.effectColor = Color.yellow;                
+                outline.effectColor = Color.yellow;
+            }
+        }
+        
+        if (cardData.Owner == _new.GetInActivePlayerID())
+        {
+            if (_new.currentPhase == Phase.DeclareBlockers && (cardData.currentZone == Zone.Regroup || cardData.currentZone == Zone.Attackers))
+            {
+                outline.effectColor = Color.yellow;
             }
         }
 

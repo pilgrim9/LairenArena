@@ -69,6 +69,8 @@ public class Player
     public bool KeepHand;
     public int mulliganCount = 0;
 
+    public bool autoSkip = false;
+
     public bool AwaitingBottomDecision;
     public int CardsToBottom; 
     public int SelectedCardIdForBottom = -1;
@@ -103,10 +105,15 @@ public class Player
 
     public Card getTopCardFrom(Zone zone) {
         return Cards.getCardFromID(GetZone(zone)[0]);
-    }    
-    public Card getBottomCardFrom(Zone zone) {
+    }
+    public Card getBottomCardFrom(Zone zone)
+    {
         return Cards.getCardFromID(GetZone(zone)[^1]);
-        
+
+    }
+    public bool IsLocal()
+    {
+        return PlayerId == GameController.instance.GetLocalPlayerId();
     }
 
     public List<int> GetZone(Zone zone)

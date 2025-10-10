@@ -28,6 +28,10 @@ namespace StackObjects
             return typeof(Cards.Card) == GetType();
         }
         public Player getOwner() { return GameController.instance.gameState.Players[Owner]; }
+        public bool IsOwnerLocal()
+        {
+            return getOwner().IsLocal();
+        }
 
     }
 

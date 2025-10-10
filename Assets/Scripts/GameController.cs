@@ -299,6 +299,7 @@ public class GameController : NetworkBehaviour
         while (player.CardsToBottom > 0)
         {
             Debug.Log("Waiting for " + player + " to select a card to put on bottom.");
+            yield return Propagate();
             // Wait for player to select a card to put on bottom
             yield return new WaitUntil(() => player.SelectedCardIdForBottom != -1);
             Debug.Log("Selected card to put on bottom: " + player.SelectedCardIdForBottom);
@@ -374,6 +375,7 @@ public class GameController : NetworkBehaviour
             // Wait for the player with priority to make a decision
             WaitingForResponse = true;
             Debug.Log("Waiting for " + gameState.GetPlayerWithPriority() + " to make a decision.");
+            if (gameState.GetPlayerWithPriority().autoSkip) gameState.GetPlayerWithPriority().HasPassedPriority = true;
             yield return new WaitUntil(() =>
                 gameState.GetPlayerWithPriority().HasPassedPriority ||
                 gameState.GetPlayerWithPriority().HasAddedToStack);
@@ -576,6 +578,7 @@ public class GameController : NetworkBehaviour
         Card attacker = Cards.getCardFromID(attackerId);
         Card blocker = Cards.getCardFromID(blockerId);
         attacker.Blockers.Remove(blockerId);
+        blocker.currentZone = Zone.Regroup;
         blocker.BlockingAttacker = -1;
         yield return MoveCard(blockerId, attacker.Blockers, attacker.getOwner().GetZone(Zone.Regroup), Zone.Regroup);
     }
@@ -720,7 +723,6 @@ public class GameController : NetworkBehaviour
             }
             yield return Propagate();
         }
-
         yield return Propagate();
     }
     
@@ -776,7 +778,7 @@ public class GameController : NetworkBehaviour
                 Debug.Log("Entering Reveal Phase");
                 yield return Reveal();
                 yield return AwaitPriority();
-                
+
                 Debug.Log("Entering Draw Phase");
                 yield return Draw();
                 yield return AwaitPriority();
@@ -784,11 +786,11 @@ public class GameController : NetworkBehaviour
                 Debug.Log("Entering Main Phase 1");
                 yield return MainPhase1();
                 yield return AwaitPriority();
-                
+
                 Debug.Log("Entering Combat Phase");
                 yield return CombatStart();
                 yield return AwaitPriority();
-                
+
                 Debug.Log("Entering Declare Attackers Phase");
                 yield return DeclareAttackers();
                 yield return AwaitPriority();
@@ -808,12 +810,21 @@ public class GameController : NetworkBehaviour
                 Debug.Log("Entering End Phase");
                 yield return EndPhase();
                 yield return AwaitPriority();
-                
+
                 Debug.Log("Entering Cleanup Phase");
                 yield return Cleanup();
-                // Wait for the next frame
+                CleanInputs();
+                // Wait for next frame
                 yield return null;
             }
+        }
+    }
+    
+    private void CleanInputs()
+    {
+        foreach (Player player in gameState.Players)
+        {
+            player.autoSkip = false;
         }
     }
 
