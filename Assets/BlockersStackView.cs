@@ -5,9 +5,12 @@ using UnityEngine;
 public class BlockersStackView : CardStackView
 {
     CardView cardView;
-    void Awake()
+
+    protected override void Awake()
     {
+        base.Awake();
         cardView = transform.GetComponentInParent<CardView>();
+        isOwner = !cardView.cardData.IsOwnerLocal();
     }
     protected override List<int> GetCardList(GameState _new)
     {

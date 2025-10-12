@@ -32,7 +32,7 @@ public class CardView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         isHidden = false;
         image.sprite = getCardImage();
-
+        gameObject.SetActive(true);
     }
 
     public Sprite getCardImage()
@@ -81,7 +81,7 @@ public class CardView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             {
                 Debug.Log($"Attempting to move card {cardData.Name} from attack to regroup");
                 RPCManager.instance.RpcSelectAttacker(cardData.InGameId, GameController.instance.GetLocalPlayerId());
-            } 
+            }
             else
             {
                 Debug.Log($"Slected card {cardData.Name} as block target.");
@@ -109,38 +109,53 @@ public class CardView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         {
             return;
         }
-        // We only care about our cards for now
-        if (cardData.Owner != GameController.instance.GetLocalPlayerId()) return;
-
+        if (cardData.Owner != GameController.instance.GetLocalPlayerId())
+        {
+            UpdateOpponentCards(_new);
+            return;
+        }
+        UpdatePlayerCards(_new);
+      
+    }
+    private void UpdatePlayerCards(GameState _new)
+    {
         if (cardData.currentZone == Zone.Reserve && cardData.getOwner().AmountToPay > 0)
         {
             // highlight as usable
             outline.effectColor = Color.yellow;
             return;
         }
-        if (GameController.instance.gameState.currentPhase == Phase.Mulligan && cardData.getOwner().AwaitingBottomDecision)
+        if (_new.currentPhase == Phase.Mulligan && cardData.getOwner().AwaitingBottomDecision)
         {
             outline.effectColor = Color.yellow;
             return;
         }
-
-        if (cardData.Owner == _new.ActivePlayer)
+        if (_new.currentPhase == Phase.DeclareAttackers &&
+            !cardData.getOwner().hasDeclaredAttack &&
+            (cardData.currentZone == Zone.Attackers || cardData.currentZone == Zone.Regroup))
         {
-            if (_new.currentPhase == Phase.DeclareAttackers && (cardData.currentZone == Zone.Regroup || cardData.currentZone == Zone.Attackers))
-            {
-                outline.effectColor = Color.yellow;
-            }
+            outline.effectColor = Color.yellow;
         }
-        
-        if (cardData.Owner == _new.GetInActivePlayerID())
+
+        if (cardData.Owner == _new.GetInActivePlayerID() &&
+            _new.currentPhase == Phase.DeclareBlockers &&
+            !cardData.getOwner().hasDeclaredBlock &&
+            (cardData.currentZone == Zone.Regroup || Zone.Blockers == cardData.currentZone))
         {
-            if (_new.currentPhase == Phase.DeclareBlockers && (cardData.currentZone == Zone.Regroup || cardData.currentZone == Zone.Attackers))
-            {
-                outline.effectColor = Color.yellow;
-            }
+            outline.effectColor = Color.yellow;
         }
 
         if (cardData.currentZone == Zone.Hand && (isPlayable || cardData.CanActivateAbilities()))
+        {
+            outline.effectColor = Color.yellow;
+        }
+    }
+    private void UpdateOpponentCards(GameState _new)
+    {
+        if (cardData.Owner == _new.ActivePlayer &&
+            _new.currentPhase == Phase.DeclareBlockers &&
+            !cardData.getOwner().hasDeclaredBlock &&
+            cardData.currentZone == Zone.Attackers)
         {
             outline.effectColor = Color.yellow;
         }

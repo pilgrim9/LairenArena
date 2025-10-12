@@ -46,7 +46,6 @@ public class GameController : NetworkBehaviour
 
     public int GetLocalPlayerId()
     {
-        Debug.Log("GetLocalPlayerId | isServer: " + isServer);
         if (isServer) // Host
             return 0;
         if (!isServer) // Client only
@@ -691,7 +690,7 @@ public class GameController : NetworkBehaviour
     {
         gameState.currentPhase = Phase.DeclareBlockers;
         Debug.Log("GameController | DeclareBlockers | Waiting for " + gameState.GetInActivePlayer() + " to declare blockers.");
-        if (gameState.GetActivePlayer().Attackers.Count == 0 || gameState.GetInActivePlayer().Attackers.Count == 0) yield break;
+        if (gameState.GetActivePlayer().Attackers.Count == 0 || gameState.GetInActivePlayer().Regroup.Count == 0) yield break;
         gameState.playerWithPriority = gameState.GetInActivePlayerID();
         gameState.GetInActivePlayer().hasDeclaredBlock = false;
         gameState.GetInActivePlayer().wantsToBlockWith = -1;

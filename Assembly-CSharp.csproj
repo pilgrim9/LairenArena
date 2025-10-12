@@ -72,6 +72,7 @@
     <Compile Include="Assets\MirrorPlayer.cs" />
     <Compile Include="Assets\Scripts\CardView.cs" />
     <Compile Include="Assets\Scripts\Phase.cs" />
+    <Compile Include="Assets\Events.cs" />
     <Compile Include="Assets\BlockersStackView.cs" />
     <Compile Include="Assets\Scripts\CardTypes.cs" />
     <Compile Include="Assets\Scripts\Abilities.cs" />

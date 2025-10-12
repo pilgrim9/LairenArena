@@ -23,7 +23,7 @@ public class CardStackView : MonoBehaviour, IPointerClickHandler
         return  _new.Players[GetPlayer()].GetZone(zone);
     }
     GameObject cardViewPrefab;
-    private void Awake()
+    protected virtual void Awake()
     {
         image = GetComponent<Image>();
         cardViewPrefab = Resources.Load("CardVisual") as GameObject;
@@ -59,6 +59,7 @@ public class CardStackView : MonoBehaviour, IPointerClickHandler
         {
             CardView view = transform.GetChild(i).GetComponent<CardView>();
             if (i >= cardList.Count) {
+                view.Hide();
                 view.gameObject.SetActive(false);
                 continue;
             }
