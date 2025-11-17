@@ -351,6 +351,49 @@ public class GameController : NetworkBehaviour
             Debug.Log("Player " + player + " must pay to stack " + stackable);
             yield return player.MustPay(((Card)stackable).Cost);
             if (player.PaymentCanceled) yield break;
+
+            Card card = (Card)stackable;
+            var requiredTargets = new Queue<TargetInfo>();
+
+            foreach (var ability in card.Abilities)
+            {
+                foreach (var effect in ability.Effects)
+                {
+                    if (effect.ValidTargets != null)
+                    {
+                        requiredTargets.Enqueue(effect.ValidTargets);
+                    }
+                }
+            }
+
+            while (requiredTargets.Count > 0)
+            {
+                var currentTargetInfo = requiredTargets.Dequeue();
+                gameState.CurrentTargetInfo = currentTargetInfo;
+                gameState.state = State.AwaitingTarget;
+                yield return new WaitUntil(() => player.wantsToTarget != -1 || player.TargetsCancelled);
+
+                if (player.TargetsCancelled)
+                {
+                    player.TargetsCancelled = false;
+                    yield break;
+                }
+
+                if (currentTargetInfo.IsValidTarget(player.wantsToTarget, player))
+                {
+                    stackable.Targets.Add(player.wantsToTarget);
+                    player.wantsToTarget = -1;
+                }
+                else
+                {
+                    // Handle invalid target selection
+                    Debug.Log("Invalid target selected.");
+                    player.wantsToTarget = -1;
+                    requiredTargets.Enqueue(currentTargetInfo); // Re-queue the target info
+                }
+            }
+
+            gameState.state = State.InProgress;
             player.HasAddedToStack = true;
             stackable.Caster = instance.gameState.Players.IndexOf(player);
             player.Hand.Remove(stackable.InGameId);
@@ -462,10 +505,13 @@ public class GameController : NetworkBehaviour
         if (gameState.TheStack.Count > 0)
         {
             Stackable resolveThis = gameState.PopStack().stackable;
-            // foreach (var effect in resolveThis.ResolutionEffects)
-            // {
-                // effect.Invoke(resolveThis);
-            // }
+            foreach (var ability in ((Card)resolveThis).Abilities)
+            {
+                foreach (var effect in ability.Effects)
+                {
+                    yield return ResolveEffect(effect, resolveThis.Targets);
+                }
+            }
              
             if (resolveThis is Card card)
             {
@@ -485,6 +531,21 @@ public class GameController : NetworkBehaviour
     public IEnumerator ResolveCard(Card card)
     {
         yield return MoveCard(card.InGameId, card.getResolutionTargetZone());
+    }
+
+    private IEnumerator ResolveEffect(Abilities.Effect effect, List<int> targets)
+    {
+        switch (effect.Type)
+        {
+            case Abilities.EffectType.Damage:
+                foreach (var targetId in targets)
+                {
+                    Cards.getCardFromID(targetId).Damage += effect.Amount;
+                }
+                break;
+            // Add other effect types here
+        }
+        yield return null;
     }
 
     private IEnumerator DrawCards(Player player, int count)

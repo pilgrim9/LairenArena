@@ -1,23 +1,47 @@
 using System.Collections.Generic;
+using System.Linq;
 
-public static class Targets {
-    
-    public static string Opponent = "Opponent";
-    public static string Player = "Player";
-    public static string Unit = "Unit";
-    public static string EnemyUnit = "EnemyUnit";
-    public static string ActionOrUnitOrderWithCost3OrLess = "ActionOrUnitOrderWithCost3OrLess";
+public enum TargetType
+{
+    Player,
+    CardInZone,
+    StackAbility
+}
 
-    public static string ActionOrderWithCost2OrLess = "ActionOrderWithCost2OrLess";
-    public static string Order = "Order";
-    public static string AbilityInPlay = "AbilityInPlay";
-    public static string TwoWitchesInGraveyard = "TwoWitchesInGraveyard";
-    public static string OneOrTwoUnits = "OneOrTwoUnits";
+public class TargetInfo
+{
+    public TargetType Type;
+    public Zone Zone;
+    public List<string> CardTypes;
+    public bool CanTargetSelf;
+    public bool CanTargetOpponent;
 
-    public class SelectedTarget {
-        public int playerId = -1;
-        public int cardId = -1;
-        public int stackIndex = -1;
+    public bool IsValidTarget(int targetId, Player castingPlayer)
+    {
+        switch (Type)
+        {
+            case TargetType.CardInZone:
+                var card = Cards.getCardFromID(targetId);
+                if (card == null) return false;
+                if (card.currentZone != Zone) return false;
+                if (CardTypes != null && CardTypes.Count > 0 && !card.Types.Any(t => CardTypes.Contains(t))) return false;
+
+                bool isSelf = card.Owner == castingPlayer.PlayerId;
+                if (isSelf && !CanTargetSelf) return false;
+                if (!isSelf && !CanTargetOpponent) return false;
+
+                return true;
+
+            case TargetType.Player:
+                var targetPlayer = GameController.instance.gameState.Players.FirstOrDefault(p => p.PlayerId == targetId);
+                if (targetPlayer == null) return false;
+
+                bool isTargetSelf = targetPlayer.PlayerId == castingPlayer.PlayerId;
+                if (isTargetSelf && !CanTargetSelf) return false;
+                if (!isTargetSelf && !CanTargetOpponent) return false;
+
+                return true;
+        }
+        return false;
     }
-
 }

@@ -21,6 +21,7 @@ namespace StackObjects
 
         public int Owner = -1;
         public int Caster = -1;
+        public List<int> Targets = new();
         [NonSerialized]
         public List<Abilities.ResolutionEffect> ResolutionEffects = new();
         public bool IsCard()

@@ -25,9 +25,7 @@ public static class Cards
         public int Cost = 0;
         public int Damage = 0;
         public List<int> Blockers = new();
-        public List<string> StaticAbilities = new();
-        public List<string> TriggeredAbilities = new();
-        public List<string> ActivatedAbilities = new();
+        public List<Abilities.Ability> Abilities = new();
         public List<string> AdditionalCosts = new();
         public int BlockingAttacker = -1;
 
@@ -64,15 +62,6 @@ public static class Cards
             return GameController.instance.gameState.Players[Caster].GetZone(currentZone);
         }
 
-        public bool CanActivateAbilities()
-        {
-            foreach (var ability in ActivatedAbilities)
-            {
-                return Abilities.ActivatedAbilities[ability].PlayableFrom.Contains(currentZone);
-            }
-            return false;
-        }
-
         public Card Clone()
         {
             // Ugly, ugly deep clone.
@@ -96,7 +85,7 @@ public static class Cards
         Power = 2,
         Resistance = 2,
         Cost = 1,
-        StaticAbilities = new List<string> {"FRENZY"},
+        Abilities = new List<Abilities.Ability> {Abilities.AllAbilities["DealDamage"]},
     };
     public static Card SOMBRA_DEL_DESIERTO = new(){
         Name = "SOMBRA DEL DESIERTO",

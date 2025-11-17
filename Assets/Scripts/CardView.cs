@@ -97,6 +97,11 @@ public class CardView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         {
             RPCManager.instance.RpcSelectBlocker(cardData.InGameId, GameController.instance.GetLocalPlayerId());
         }
+
+        if (GameController.instance.gameState.state == State.AwaitingTarget)
+        {
+            RPCManager.instance.RpcSelectTarget(cardData.InGameId, GameController.instance.GetLocalPlayerId());
+        }
         Debug.Log($"Card {cardData.Name} is in {cardData.currentZone} zone, checking for activated abilities");
     }
 
@@ -148,6 +153,11 @@ public class CardView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         if (cardData.currentZone == Zone.Hand && (isPlayable || cardData.CanActivateAbilities()))
         {
             outline.effectColor = Color.yellow;
+        }
+
+        if (_new.state == State.AwaitingTarget && _new.CurrentTargetInfo.IsValidTarget(cardData.InGameId, _new.GetActivePlayer()))
+        {
+            outline.effectColor = Color.red;
         }
     }
     private void UpdateOpponentCards(GameState _new)
