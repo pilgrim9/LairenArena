@@ -509,7 +509,10 @@ public class GameController : NetworkBehaviour
             {
                 foreach (var effect in ability.Effects)
                 {
-                    yield return ResolveEffect(effect, resolveThis.Targets);
+                    if (Abilities.EffectResolvers.TryGetValue(effect.Type, out var resolver))
+                    {
+                        yield return resolver(effect, resolveThis.Targets);
+                    }
                 }
             }
              
@@ -531,21 +534,6 @@ public class GameController : NetworkBehaviour
     public IEnumerator ResolveCard(Card card)
     {
         yield return MoveCard(card.InGameId, card.getResolutionTargetZone());
-    }
-
-    private IEnumerator ResolveEffect(Abilities.Effect effect, List<int> targets)
-    {
-        switch (effect.Type)
-        {
-            case Abilities.EffectType.Damage:
-                foreach (var targetId in targets)
-                {
-                    Cards.getCardFromID(targetId).Damage += effect.Amount;
-                }
-                break;
-            // Add other effect types here
-        }
-        yield return null;
     }
 
     private IEnumerator DrawCards(Player player, int count)
