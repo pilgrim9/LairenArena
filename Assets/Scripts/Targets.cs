@@ -13,6 +13,7 @@ public class TargetInfo
     public TargetType Type;
     public Zone Zone;
     public List<string> CardTypes;
+    public int? MaxPower;
     public bool CanTargetSelf;
     public bool CanTargetOpponent;
 
@@ -25,6 +26,7 @@ public class TargetInfo
                 if (card == null) return false;
                 if (card.currentZone != Zone) return false;
                 if (CardTypes != null && CardTypes.Count > 0 && !card.Types.Any(t => CardTypes.Contains(t))) return false;
+                if (MaxPower.HasValue && card.Power > MaxPower.Value) return false;
 
                 bool isSelf = card.Owner == castingPlayer.PlayerId;
                 if (isSelf && !CanTargetSelf) return false;

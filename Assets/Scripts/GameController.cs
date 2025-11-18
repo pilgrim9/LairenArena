@@ -353,6 +353,15 @@ public class GameController : NetworkBehaviour
             if (player.PaymentCanceled) yield break;
 
             Card card = (Card)stackable;
+
+            foreach (var cost in card.AdditionalCosts)
+            {
+                if (Costs.CostResolvers.TryGetValue(cost, out var resolver))
+                {
+                    yield return resolver(player);
+                }
+            }
+
             var requiredTargets = new Queue<TargetInfo>();
 
             foreach (var ability in card.Abilities)
@@ -395,6 +404,10 @@ public class GameController : NetworkBehaviour
 
             gameState.state = State.InProgress;
             player.HasAddedToStack = true;
+            if (card.Types.Contains(CardTypes.ORDER))
+            {
+                FireEvent(GameEvent.OnOrderPlayed);
+            }
             stackable.Caster = instance.gameState.Players.IndexOf(player);
             player.Hand.Remove(stackable.InGameId);
             Cards.getCardFromID(stackable.InGameId).currentZone = Zone.Stack;
@@ -404,6 +417,34 @@ public class GameController : NetworkBehaviour
     }
 
     // Add this method to handle priority passing
+    private List<GameEvent> eventQueue = new();
+
+    public void FireEvent(GameEvent gameEvent)
+    {
+        eventQueue.Add(gameEvent);
+    }
+
+    private IEnumerator CheckTriggers()
+    {
+        while (eventQueue.Count > 0)
+        {
+            var gameEvent = eventQueue[0];
+            eventQueue.RemoveAt(0);
+
+            foreach (var card in gameState.cards)
+            {
+                foreach (var ability in card.Abilities)
+                {
+                    if (ability.Trigger == gameEvent)
+                    {
+                        gameState.TheStack.Add(new StackItem(ability));
+                    }
+                }
+            }
+        }
+        yield return null;
+    }
+
     private IEnumerator HandlePriority()
     {
         // Start with active player
@@ -413,6 +454,7 @@ public class GameController : NetworkBehaviour
         while (roundOfPriority)
         {
             yield return UpdateStateBasedEffects();
+            yield return CheckTriggers();
             yield return Propagate();
             // Wait for the player with priority to make a decision
             WaitingForResponse = true;
@@ -606,6 +648,11 @@ public class GameController : NetworkBehaviour
         to.Add(card);
         gameState.cards[card].currentZone = targetZone;
 
+        if (targetZone == Zone.Regroup)
+        {
+            FireEvent(GameEvent.OnCardEntersBattlefield);
+        }
+
         yield return Propagate();
     }
 
@@ -658,6 +705,10 @@ public class GameController : NetworkBehaviour
     private IEnumerator Untap()
     {
         gameState.currentPhase = Phase.Untap;
+        foreach (var cardId in gameState.GetActivePlayer().Regroup)
+        {
+            Cards.getCardFromID(cardId).SummoningSickness = false;
+        }
         yield return MoveAll(gameState.GetActivePlayer().Paid, gameState.GetActivePlayer().Reserve, Zone.Reserve);
         yield return MoveAll(gameState.GetActivePlayer().Attackers, gameState.GetActivePlayer().Regroup, Zone.Regroup);
     } 
@@ -719,13 +770,17 @@ public class GameController : NetworkBehaviour
             {
                 Debug.Log("GameController | DeclareAttackers | Player wants to attack with " + gameState.GetActivePlayer().wantsToAttackWith);
                 int cardId = gameState.GetActivePlayer().wantsToAttackWith;
-                if (Cards.getCardFromID(cardId).currentZone == Zone.Attackers)
+                var card = Cards.getCardFromID(cardId);
+                if (card.currentZone == Zone.Attackers)
                 {
                     yield return MoveCard(cardId, Zone.Regroup);
                 }
-                else if (Cards.getCardFromID(cardId).currentZone == Zone.Regroup)
+                else if (card.currentZone == Zone.Regroup)
                 {
-                    yield return MoveCard(cardId, Zone.Attackers);
+                    if (!card.SummoningSickness || card.Keywords.Contains(Keyword.Frenzy))
+                    {
+                        yield return MoveCard(cardId, Zone.Attackers);
+                    }
                 }
                 gameState.GetActivePlayer().wantsToAttackWith = -1;
             }

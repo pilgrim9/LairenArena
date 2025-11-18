@@ -48,3 +48,14 @@ Update Mode: mergeDefaultDependencies
 
 The following packages were added:
   com.unity.nuget.newtonsoft-json@3.2.1
+
+=== Tue Nov 18 16:44:26 2025
+
+Packages were changed.
+Update Mode: updateDependencies
+
+The following packages were updated:
+  com.unity.collab-proxy from version 2.5.2 to 2.7.1
+  com.unity.textmeshpro from version 3.0.6 to 3.0.7
+  com.unity.timeline from version 1.7.6 to 1.7.7
+  com.unity.visualscripting from version 1.9.2 to 1.9.4
