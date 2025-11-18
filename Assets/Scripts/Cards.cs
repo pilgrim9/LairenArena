@@ -133,7 +133,7 @@ public static class Cards
         Name = "MUERTE INMINENTE",
         Types = new List<string> {CardTypes.ORDER, CardTypes.FAST},
         Cost = 1,
-        AdditionalCosts = new List<string> {Costs.Pay2Life},
+        AdditionalCosts = new List<string> {Costs.pay2life},
         Abilities = new List<Abilities.Ability> {Abilities.AllAbilities["MuerteInminente"]},
     };
     public static Card PLANES_FRUSTRADOS = new(){
@@ -145,7 +145,7 @@ public static class Cards
         Name = "RITUAL DE NEGACION",
         Types = new List<string> {CardTypes.ORDER},
         Cost = 1,
-        AdditionalCosts = new List<string> {Costs.DiscardACard}
+        AdditionalCosts = new List<string> {Costs.discardACard}
     };
     public static Card LIDER_DE_LA_MANADA = new(){
         Name = "LIDER DE LA MANADA",

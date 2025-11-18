@@ -8,12 +8,11 @@ public static class Costs
 
     public static readonly Dictionary<string, ResolveCostDelegate> CostResolvers = new()
     {
-        { "Pay2Life", Pay2Life }
+        { pay2life, Pay2Life },
     };
 
-    public static readonly string Pay2Life = "Pay2Life";
-    // Add other costs here
-
+    public static readonly  string pay2life = "Pay2Life";
+    public static readonly string discardACard = "DiscardACard";
     private static IEnumerator Pay2Life(Player player)
     {
         player.Life -= 2;

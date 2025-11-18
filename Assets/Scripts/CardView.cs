@@ -150,7 +150,7 @@ public class CardView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             outline.effectColor = Color.yellow;
         }
 
-        if (cardData.currentZone == Zone.Hand && (isPlayable || cardData.CanActivateAbilities()))
+        if (cardData.currentZone == Zone.Hand && isPlayable)
         {
             outline.effectColor = Color.yellow;
         }
