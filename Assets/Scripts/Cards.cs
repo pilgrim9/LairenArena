@@ -23,11 +23,12 @@ public static class Cards
         public int Power = 0;
         public int Resistance = 0;
         public int Cost = 0;
+        public List<Keyword> Keywords = new();
+        public List<Keyword> GrantedKeywords = new();
         public int Damage = 0;
+        public bool SummoningSickness = true;
         public List<int> Blockers = new();
-        public List<string> StaticAbilities = new();
-        public List<string> TriggeredAbilities = new();
-        public List<string> ActivatedAbilities = new();
+        public List<Abilities.Ability> Abilities = new();
         public List<string> AdditionalCosts = new();
         public int BlockingAttacker = -1;
 
@@ -65,15 +66,6 @@ public static class Cards
             return GameController.instance.gameState.Players[Caster].GetZone(currentZone);
         }
 
-        public bool CanActivateAbilities()
-        {
-            foreach (var ability in ActivatedAbilities)
-            {
-                return Abilities.ActivatedAbilities[ability].PlayableFrom.Contains(currentZone);
-            }
-            return false;
-        }
-
         public Card Clone()
         {
             // Ugly, ugly deep clone.
@@ -97,7 +89,8 @@ public static class Cards
         Power = 2,
         Resistance = 2,
         Cost = 1,
-        StaticAbilities = new List<string> {"FRENZY"},
+        Keywords = new List<Keyword> {Keyword.Frenzy},
+        Abilities = new List<Abilities.Ability> {Abilities.AllAbilities["RojoFugazStatic"]},
     };
     public static Card SOMBRA_DEL_DESIERTO = new(){
         Name = "SOMBRA DEL DESIERTO",
@@ -106,6 +99,7 @@ public static class Cards
         Power = 3,
         Resistance = 3,
         Cost = 2,
+        Abilities = new List<Abilities.Ability> {Abilities.AllAbilities["SombraDelDesiertoTrigger"]},
     };
     public static Card BRUJA_ELEMENTALISTA = new(){
         Name = "HECHICERA ELEMENTAL",
@@ -115,6 +109,7 @@ public static class Cards
         Power = 2,
         Resistance = 3,
         Cost = 2,
+        Abilities = new List<Abilities.Ability> {Abilities.AllAbilities["BrujaElementalistaTrigger"]},
     };
     public static Card ANCIANA_MAESTRA = new(){
         Name = "ANCIANA MAESTRA",
@@ -139,7 +134,8 @@ public static class Cards
         Name = "MUERTE INMINENTE",
         Types = new List<string> {CardTypes.ORDER, CardTypes.FAST},
         Cost = 1,
-        AdditionalCosts = new List<string> {Costs.Pay2Life}
+        AdditionalCosts = new List<string> {Costs.Pay2Life},
+        Abilities = new List<Abilities.Ability> {Abilities.AllAbilities["MuerteInminente"]},
     };
     public static Card PLANES_FRUSTRADOS = new(){
         Name = "PLANES FRUSTRADOS",

@@ -1,23 +1,22 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 
-public static class Costs {
-    public class Cost
+public static class Costs
+{
+    public delegate IEnumerator ResolveCostDelegate(Player player);
+
+    public static readonly Dictionary<string, ResolveCostDelegate> CostResolvers = new()
     {
-        public int Amount;
+        { "Pay2Life", Pay2Life }
+    };
+
+    public static readonly string Pay2Life = "Pay2Life";
+    // Add other costs here
+
+    private static IEnumerator Pay2Life(Player player)
+    {
+        player.Life -= 2;
+        yield return null;
     }
-
-    public class PayLife : Cost {}
-    public class Discard : Cost {}
-
-    // public static Dictionary<string,Cost> additionalCosts = new Dictionary<string,Cost>() {
-    //     { Pay2Life, new PayLife() { Amount = 2} },
-    //     { DiscardACard, new Discard() { Amount = 1} }    
-    // };
-    public static Cost getResourceCost( int amount) {
-        return new Cost() { Amount = amount };
-    }
-    
-    public static string Pay2Life = "Pay2Life";
-    public static string DiscardACard = "DiscardACard";
-
 }

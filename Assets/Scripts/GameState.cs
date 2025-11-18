@@ -7,7 +7,8 @@ public enum State
 {
     WaitingForPlayers,
     InProgress,
-    AwaitingPayment
+    AwaitingPayment,
+    AwaitingTarget
 }
 
 [Serializable]
@@ -24,6 +25,8 @@ public class GameState
     public bool firstTurn;
     public int startingPlayer;
     public int winner;
+    [NonSerialized]
+    public TargetInfo CurrentTargetInfo;
 
     public StackItem PopStack()
     {
