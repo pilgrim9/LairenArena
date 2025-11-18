@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Mirror;
 
@@ -22,8 +22,6 @@ namespace StackObjects
         public int Owner = -1;
         public int Caster = -1;
         public List<int> Targets = new();
-        [NonSerialized]
-        public List<Abilities.ResolutionEffect> ResolutionEffects = new();
         public bool IsCard()
         {
             return typeof(Cards.Card) == GetType();
@@ -40,8 +38,7 @@ namespace StackObjects
     public class StackItem
     {
         public int card = -1;
-        public string TriggeredAbility = "";
-        public string ActivatedAbility = "";
+        public string AbilityName = "";
         [NonSerialized] public Stackable stackable;
         public int RelatedCardId = -1;
 
@@ -52,10 +49,8 @@ namespace StackObjects
         }
         public StackItem(Stackable StackThis)
         {
-
             stackable = StackThis;
-            if (StackThis.GetType() == typeof(Abilities.TriggeredAbility)) TriggeredAbility = StackThis.Name;
-            if (StackThis.GetType() == typeof(Abilities.ActivatedAbility)) ActivatedAbility = StackThis.Name;
+            if (StackThis is Abilities.Ability ability) AbilityName = ability.Name;
             if (StackThis.IsCard()) card = StackThis.InGameId;
             RelatedCardId = StackThis.GetRelatedCard();
         }
