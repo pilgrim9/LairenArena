@@ -564,22 +564,16 @@ public class GameController : NetworkBehaviour
     {
         Card attacker = Cards.getCardFromID(attackerId);
         Card blocker = Cards.getCardFromID(blockerId);
-        attacker.Blockers.Add(blockerId);
-        List<int> from = blocker.getOwner().GetZone(blocker.currentZone);
-        from.Remove(blockerId);
-        blocker.currentZone = Zone.Blockers;
         blocker.BlockingAttacker = attackerId;
-        yield return Propagate();
+        yield return MoveCard(blockerId, blocker.getCurrentZone(), attacker.Blockers, Zone.Blockers);
     }
 
     public IEnumerator RemoveCardFromBlockers(int blockerId, int attackerId)
     {
         Card attacker = Cards.getCardFromID(attackerId);
         Card blocker = Cards.getCardFromID(blockerId);
-        attacker.Blockers.Remove(blockerId);
-        blocker.currentZone = Zone.Regroup;
         blocker.BlockingAttacker = -1;
-        yield return MoveCard(blockerId, attacker.Blockers, attacker.getOwner().GetZone(Zone.Regroup), Zone.Regroup);
+        yield return MoveCard(blockerId, attacker.Blockers, blocker.getOwner().GetZone(Zone.Regroup), Zone.Regroup);
     }
 
     private IEnumerator ApplyDamage(Player attackingPlayer, Player defendingPlayer)

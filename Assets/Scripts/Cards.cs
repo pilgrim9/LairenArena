@@ -39,6 +39,7 @@ public static class Cards
             else return OnResolutionTargetZone;
         }
         public Zone currentZone;
+        public List<int> getCurrentZone() => getOwner().GetZone(currentZone);
         public List<Zone> PlayableFrom = new() { Zone.Hand };
         public int controller;
 
