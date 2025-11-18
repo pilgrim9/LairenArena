@@ -55,11 +55,6 @@ public class RPCManager : NetworkBehaviour
     {
         GameController.instance.gameState.Players[playerId].PaymentCanceled = true;
     }
-    [Command(requiresAuthority = false)]
-    public void RpcCancelTargets(int playerId)
-    {
-        GameController.instance.gameState.Players[playerId].TargetsCancelled = true;
-    }
 
     [Command(requiresAuthority = false)]
     public void RpcConfirmAttackers(int playerId)
@@ -85,6 +80,18 @@ public class RPCManager : NetworkBehaviour
     public void RpcSelectBlockTarget(int card, int playerId)
     {
         GameController.instance.gameState.Players[playerId].wantsToBlockTarget = card;
+    }
+
+    [Command(requiresAuthority = false)]
+    public void RpcSelectTarget(int card, int playerId)
+    {
+        GameController.instance.gameState.Players[playerId].wantsToTarget = card;
+    }
+
+    [Command(requiresAuthority = false)]
+    public void RpcCancelTargets(int playerId)
+    {
+        GameController.instance.gameState.Players[playerId].TargetsCancelled = true;
     }
 
 

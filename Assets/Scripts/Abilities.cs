@@ -1,55 +1,67 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using StackObjects;
 
 public class Abilities
 {
+    public delegate IEnumerator ResolveEffectDelegate(Effect effect, List<int> targets);
 
-
-    public static readonly Dictionary<string, StaticAbility> StaticAbilities = new()
+    public static readonly Dictionary<EffectType, ResolveEffectDelegate> EffectResolvers = new()
     {
-        { "ROJO FUGAZ", new RojoFugazStaticAbility() }
+        { EffectType.Damage, ResolveDamageEffect }
     };
-    public static readonly Dictionary<string, ActivatedAbility> ActivatedAbilities = new()
+
+    public static readonly Dictionary<string, Ability> AllAbilities = new()
     {
+        { "DealDamage", new Ability()
+            {
+                Effects = new List<Effect>()
+                {
+                    new Effect()
+                    {
+                        Type = EffectType.Damage,
+                        Amount = 3,
+                        ValidTargets = new TargetInfo()
+                        {
+                            Type = TargetType.CardInZone,
+                            Zone = Zone.Regroup,
+                            CardTypes = new List<string>() { "Ally" },
+                            CanTargetOpponent = true
+                        }
+                    }
+                }
+            }
+        }
     };
-    public static readonly Dictionary<string, TriggeredAbility> TriggeredAbilities = new()
-    {
-    };
-    
+
     [Serializable]
-    public class TriggeredAbility : Stackable
+    public class Ability : Stackable
     {
-        public Triggers[] Triggers;
-        public bool OncePerTurn;
+        public List<Effect> Effects;
     }
 
     [Serializable]
-    public class ActivatedAbility : Stackable
+    public class Effect
     {
-        public Zone[] PlayableFrom = { Zone.Attackers, Zone.Regroup};
-    }
-    [Serializable]
-    public class StaticAbility
-    {
-        
-    }
-    public delegate void ResolutionEffect(Stackable self);
-
-    public static void Play(Stackable self)
-    {
-        Cards.Card card = (Cards.Card)self;
-        GameController.instance.gameState.Players[card.Owner].GetZone(card.getResolutionTargetZone()).Add(card.InGameId);
-    }
-    
-    public static void Discard(Stackable self)
-    {
-        
+        public EffectType Type;
+        public int Amount;
+        public TargetInfo ValidTargets;
     }
 
-    
-    public class RojoFugazStaticAbility : StaticAbility
+    public enum EffectType
     {
-        
+        Damage,
+        DrawCard,
+        GainLife
+    }
+
+    private static IEnumerator ResolveDamageEffect(Effect effect, List<int> targets)
+    {
+        foreach (var targetId in targets)
+        {
+            Cards.getCardFromID(targetId).Damage += effect.Amount;
+        }
+        yield return null;
     }
 }
