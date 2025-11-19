@@ -7,6 +7,7 @@ public enum TargetType
     CardInZone,
     StackAbility
 }
+[System.Serializable]
 
 public class TargetInfo
 {

@@ -478,7 +478,7 @@ public class GameController : NetworkBehaviour
 
                     if (eventMatches || isSelfTrigger || isOtherTrigger)
                     {
-                        var triggeredAbility = ability.Clone() as Abilities.Ability;
+                        var triggeredAbility = ability;
                         triggeredAbility.SourceCardInGameId = card.InGameId;
                         gameState.TheStack.Add(new StackItem(triggeredAbility));
                     }

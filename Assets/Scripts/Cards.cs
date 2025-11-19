@@ -78,6 +78,7 @@ public static class Cards
         public Zone currentZone;
         public List<Zone> PlayableFrom = new() { Zone.Hand };
         public int controller;
+        public List<Keyword> GrantedKeywords;
 
         public bool CanBePlayedFrom(Zone zone)
         {
@@ -182,7 +183,7 @@ public static class Cards
         Name = "RITUAL DE NEGACION",
         Types = new List<string> {CardTypes.ORDER},
         Cost = 1,
-        AdditionalCosts = new List<string> {Costs.discardACard}
+        // AdditionalCosts = new List<string> {Costs.discardACard}
     };
     public static Card LIDER_DE_LA_MANADA = new(){
         Name = "LIDER DE LA MANADA",

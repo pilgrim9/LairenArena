@@ -131,7 +131,7 @@ public class Abilities
                         {
                             Type = TargetType.CardInZone,
                             Zone = Zone.Discard,
-                            CardSubtypes = new List<string>() { "Bruja" },
+                            CardTypes = new List<string>() { "Bruja" },
                             CanTargetSelf = true,
                             MaxTargets = 2
                         }
