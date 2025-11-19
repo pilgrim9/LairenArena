@@ -16,6 +16,8 @@ public class TargetInfo
     public int? MaxPower;
     public bool CanTargetSelf;
     public bool CanTargetOpponent;
+    public int MaxTargets = 1;
+    public int AmountToDistribute = 0;
 
     public bool IsValidTarget(int targetId, Player castingPlayer)
     {
