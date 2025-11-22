@@ -1,7 +1,9 @@
 public enum GameEvent
 {
-    OnCardEntersBattlefield,
     OnOrderPlayed,
     Static,
+    OnSelfEntersBattlefield,
+    OnAnotherCardEntersBattlefield,
+    OnCardDefeated,
     // Add other event types here
 }

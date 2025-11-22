@@ -5,6 +5,11 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using StackObjects;
 
+public enum CounterType
+{
+    PlusOnePlusOne,
+}
+
 public static class Cards
 { 
     public static Card getCardFromID(int id) {
@@ -20,11 +25,42 @@ public static class Cards
         public List<string> Types = new();
         public List<string> Subtypes = new();
         public List<string> Supertypes = new();
-        public int Power = 0;
-        public int Resistance = 0;
+
+        private int _power = 0;
+        public int Power
+        {
+            get { return _power + (Counters.GetValueOrDefault(CounterType.PlusOnePlusOne, 0)); }
+            set { _power = value; }
+        }
+
+        private int _resistance = 0;
+        public int Resistance
+        {
+            get { return _resistance + (Counters.GetValueOrDefault(CounterType.PlusOnePlusOne, 0)); }
+            set { _resistance = value; }
+        }
+
+        public Dictionary<CounterType, int> Counters = new();
+
+        public void AddCounters(CounterType counter, int amount)
+        {
+            Counters[counter] = Counters.GetValueOrDefault(counter, 0) + amount;
+        }
+
+        public void ClearTemporaryKeywords()
+        {
+            TemporaryKeywords.Clear();
+        }
+
         public int Cost = 0;
-        public List<Keyword> Keywords = new();
-        public List<Keyword> GrantedKeywords = new();
+
+        private List<Keyword> _keywords = new();
+        public List<Keyword> Keywords
+        {
+            get { return _keywords.Concat(TemporaryKeywords).ToList(); }
+            set { _keywords = value; }
+        }
+        public List<Keyword> TemporaryKeywords = new();
         public int Damage = 0;
         public bool SummoningSickness = true;
         public List<int> Blockers = new();
@@ -42,6 +78,7 @@ public static class Cards
         public Zone currentZone;
         public List<Zone> PlayableFrom = new() { Zone.Hand };
         public int controller;
+        public List<Keyword> GrantedKeywords;
 
         public bool CanBePlayedFrom(Zone zone)
         {
@@ -117,6 +154,7 @@ public static class Cards
         Power = 3,
         Resistance = 4,
         Cost = 5,
+        Abilities = new List<Abilities.Ability> {Abilities.AllAbilities["AncianaMaestra"]},
     };
     public static Card CUMULO_DE_HONGOS = new(){
         Name = "CUMULO DE HONGOS",
@@ -145,7 +183,7 @@ public static class Cards
         Name = "RITUAL DE NEGACION",
         Types = new List<string> {CardTypes.ORDER},
         Cost = 1,
-        AdditionalCosts = new List<string> {Costs.discardACard}
+        // AdditionalCosts = new List<string> {Costs.discardACard}
     };
     public static Card LIDER_DE_LA_MANADA = new(){
         Name = "LIDER DE LA MANADA",
@@ -162,6 +200,7 @@ public static class Cards
         Power = 1,
         Resistance = 1,
         Cost = 2,
+        Abilities = new List<Abilities.Ability> {Abilities.AllAbilities["FelinoDeLaMontana"]},
     };
     public static Card GATITOS_DE_BRUJA = new(){
         Name = "GATITOS DE BRUJA",
@@ -178,6 +217,7 @@ public static class Cards
         Power = 1,
         Resistance = 2,
         Cost = 1,
+        Abilities = new List<Abilities.Ability> {Abilities.AllAbilities["Cascabufalo"]},
     };
     public static Card NICOL_LA_APRENDIZ = new(){
         Name = "NICOL, LA APRENDIZ",

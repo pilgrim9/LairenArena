@@ -380,25 +380,62 @@ public class GameController : NetworkBehaviour
                 var currentTargetInfo = requiredTargets.Dequeue();
                 gameState.CurrentTargetInfo = currentTargetInfo;
                 gameState.state = State.AwaitingTarget;
-                yield return new WaitUntil(() => player.wantsToTarget != -1 || player.TargetsCancelled);
 
-                if (player.TargetsCancelled)
+                if (currentTargetInfo.AmountToDistribute > 0)
                 {
-                    player.TargetsCancelled = false;
-                    yield break;
-                }
-
-                if (currentTargetInfo.IsValidTarget(player.wantsToTarget, player))
-                {
-                    stackable.Targets.Add(player.wantsToTarget);
-                    player.wantsToTarget = -1;
+                    int remainingAmount = currentTargetInfo.AmountToDistribute;
+                    int targetsSelected = 0;
+                    while (remainingAmount > 0 && targetsSelected < currentTargetInfo.MaxTargets)
+                    {
+                        yield return new WaitUntil(() => player.wantsToTarget != -1 || player.TargetsCancelled);
+                        if (player.TargetsCancelled)
+                        {
+                            player.TargetsCancelled = false;
+                            yield break;
+                        }
+                        if (currentTargetInfo.IsValidTarget(player.wantsToTarget, player))
+                        {
+                            int amount = player.wantsToTargetAmount;
+                            if (amount > 0 && amount <= remainingAmount)
+                            {
+                                var currentTargets = new Dictionary<int, int>();
+                                currentTargets[player.wantsToTarget] = amount;
+                                stackable.AllTargets.Add(currentTargets);
+                                remainingAmount -= amount;
+                                targetsSelected++;
+                            }
+                        }
+                        player.wantsToTarget = -1;
+                        player.wantsToTargetAmount = 0;
+                    }
                 }
                 else
                 {
-                    // Handle invalid target selection
-                    Debug.Log("Invalid target selected.");
-                    player.wantsToTarget = -1;
-                    requiredTargets.Enqueue(currentTargetInfo); // Re-queue the target info
+                    var currentTargets = new Dictionary<int, int>();
+                    int targetsSelected = 0;
+                    while (targetsSelected < currentTargetInfo.MaxTargets)
+                    {
+                        yield return new WaitUntil(() => player.wantsToTarget != -1 || player.TargetsCancelled || player.TargetsConfirmed);
+
+                        if (player.TargetsCancelled || player.TargetsConfirmed)
+                        {
+                            player.TargetsCancelled = false;
+                            player.TargetsConfirmed = false;
+                            break;
+                        }
+
+                        if (currentTargetInfo.IsValidTarget(player.wantsToTarget, player))
+                        {
+                            currentTargets[player.wantsToTarget] = 0;
+                            targetsSelected++;
+                        }
+                        else
+                        {
+                            Debug.Log("Invalid target selected.");
+                        }
+                        player.wantsToTarget = -1;
+                    }
+                    stackable.AllTargets.Add(currentTargets);
                 }
             }
 
@@ -417,27 +454,33 @@ public class GameController : NetworkBehaviour
     }
 
     // Add this method to handle priority passing
-    private List<GameEvent> eventQueue = new();
+    private List<(GameEvent gameEvent, int sourceCardId)> eventQueue = new();
 
-    public void FireEvent(GameEvent gameEvent)
+    public void FireEvent(GameEvent gameEvent, int sourceCardId = -1)
     {
-        eventQueue.Add(gameEvent);
+        eventQueue.Add((gameEvent, sourceCardId));
     }
 
     private IEnumerator CheckTriggers()
     {
         while (eventQueue.Count > 0)
         {
-            var gameEvent = eventQueue[0];
+            var (gameEvent, sourceCardId) = eventQueue[0];
             eventQueue.RemoveAt(0);
 
             foreach (var card in gameState.cards)
             {
                 foreach (var ability in card.Abilities)
                 {
-                    if (ability.Trigger == gameEvent)
+                    bool eventMatches = ability.Trigger == gameEvent;
+                    bool isSelfTrigger = sourceCardId != -1 && card.InGameId == sourceCardId && ability.Trigger == GameEvent.OnSelfEntersBattlefield;
+                    bool isOtherTrigger = sourceCardId != -1 && card.InGameId != sourceCardId && ability.Trigger == GameEvent.OnAnotherCardEntersBattlefield;
+
+                    if (eventMatches || isSelfTrigger || isOtherTrigger)
                     {
-                        gameState.TheStack.Add(new StackItem(ability));
+                        var triggeredAbility = ability;
+                        triggeredAbility.SourceCardInGameId = card.InGameId;
+                        gameState.TheStack.Add(new StackItem(triggeredAbility));
                     }
                 }
             }
@@ -526,6 +569,14 @@ public class GameController : NetworkBehaviour
                 yield return Lose(player);
             }
         }
+
+        foreach (var card in gameState.cards)
+        {
+            if (card.Damage >= card.Resistance && card.currentZone == Zone.Regroup)
+            {
+                yield return MoveCard(card.InGameId, Zone.Discard);
+            }
+        }
     }
 
 
@@ -547,20 +598,46 @@ public class GameController : NetworkBehaviour
         if (gameState.TheStack.Count > 0)
         {
             Stackable resolveThis = gameState.PopStack().stackable;
-            foreach (var ability in ((Card)resolveThis).Abilities)
+            List<Abilities.Ability> abilities = new List<Abilities.Ability>();
+
+            if (resolveThis is Card card)
+            {
+                abilities = card.Abilities;
+            }
+            else if (resolveThis is Abilities.Ability ability)
+            {
+                abilities.Add(ability);
+            }
+
+            int currentTargetIndex = 0;
+            foreach (var ability in abilities)
             {
                 foreach (var effect in ability.Effects)
                 {
                     if (Abilities.EffectResolvers.TryGetValue(effect.Type, out var resolver))
                     {
-                        yield return resolver(effect, resolveThis.Targets);
+                        Dictionary<int, int> currentTargets = null;
+                        if (effect.ValidTargets != null)
+                        {
+                            if (currentTargetIndex < resolveThis.AllTargets.Count)
+                            {
+                                currentTargets = resolveThis.AllTargets[currentTargetIndex];
+                                currentTargetIndex++;
+                            }
+                        }
+                        else if (resolveThis.AllTargets.Count > 0)
+                        {
+                            currentTargets = resolveThis.AllTargets[currentTargetIndex -1];
+                        }
+
+                        yield return resolver(effect, currentTargets, resolveThis);
                     }
                 }
             }
              
-            if (resolveThis is Card card)
+            if (resolveThis is Card cardToResolve)
             {
-                yield return ResolveCard(card);
+                yield return ResolveCard(cardToResolve);
             }
         }
         yield return null;
@@ -650,7 +727,13 @@ public class GameController : NetworkBehaviour
 
         if (targetZone == Zone.Regroup)
         {
-            FireEvent(GameEvent.OnCardEntersBattlefield);
+            FireEvent(GameEvent.OnAnotherCardEntersBattlefield, card);
+            FireEvent(GameEvent.OnSelfEntersBattlefield, card);
+        }
+
+        if (targetZone == Zone.Discard)
+        {
+            FireEvent(GameEvent.OnCardDefeated, card);
         }
 
         yield return Propagate();
@@ -839,6 +922,10 @@ public class GameController : NetworkBehaviour
     private IEnumerator EndPhase()
     {
         gameState.currentPhase = Phase.EndPhase;
+        foreach (var card in gameState.cards)
+        {
+            card.ClearTemporaryKeywords();
+        }
         yield return Propagate();
     }
 

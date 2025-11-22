@@ -26,6 +26,7 @@ public class Player
     public int wantToStack = -1; 
     public int wantsToPayWith = -1;
     public int wantsToTarget = -1;
+    public int wantsToTargetAmount = 0;
     public int wantsToAttackWith = -1;
     public int wantsToBlockWith = -1;
     public int wantsToBlockTarget = -1;
@@ -36,6 +37,7 @@ public class Player
     public bool hasDeclaredBlock;
     public bool PaymentCanceled;
     public bool TargetsCancelled;
+    public bool TargetsConfirmed;
     public bool lost = false; 
     public bool CanStackSlowActions()
     {

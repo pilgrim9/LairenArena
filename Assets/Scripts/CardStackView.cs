@@ -33,7 +33,7 @@ public class CardStackView : MonoBehaviour, IPointerClickHandler
     {
         GameController.instance.GameStateUpdated += UpdateView;
         Debug.Log("Started CardStackView " + zone + " " + GetPlayer());
-    }
+    } 
     
     void UpdateView(GameState old, GameState _new)
     {
