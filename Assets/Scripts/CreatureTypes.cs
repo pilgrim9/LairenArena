@@ -4,6 +4,7 @@ public static class CreatureTypes
     public static readonly string ANIMAL = "ANIMAL";
     public static readonly string BRUJA = "BRUJA";
     public static readonly string DESERTOR = "DESERTOR";
+    public static readonly string INSECTO = "INSECTO";
 
 
     #endregion

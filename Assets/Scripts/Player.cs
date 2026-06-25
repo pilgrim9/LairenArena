@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Mirror;
@@ -76,6 +76,10 @@ public class Player
     public bool AwaitingBottomDecision;
     public int CardsToBottom; 
     public int SelectedCardIdForBottom = -1;
+
+    public bool AwaitingDiscard;
+    public int wantsToDiscard = -1;
+    public int selectedMode = -1;
 
     // Methods for handling mulligan decisions
     public void DecideToKeep()

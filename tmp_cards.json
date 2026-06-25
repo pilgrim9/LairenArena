@@ -1,0 +1,107 @@
+[
+  {
+    "Name": "ANCIANA MAESTRA",
+    "Cost": "5",
+    "Attack": "4",
+    "Defense": "6",
+    "Text": "Aparición en juego: Pon en el campo de batalla hasta dos cartas de bruja objetivo de tu descarte con dos contadores +1/+1. Ganan Frenesí hasta el final del turno."
+  },
+  {
+    "Name": "CASCABUFALO",
+    "Cost": "1",
+    "Attack": "1",
+    "Defense": "2",
+    "Text": "Destruir: Cancela el efecto en juego objetivo. Derrotado: Drena 1."
+  },
+  {
+    "Name": "CIUDAD EN LLAMAS",
+    "Cost": "3",
+    "Attack": "",
+    "Defense": "",
+    "Text": "Hace 4 puntos de daño al jugador objetivo y 2 puntos de daño a las unidades que controla."
+  },
+  {
+    "Name": "CUMULO DE HONGOS",
+    "Cost": "1",
+    "Attack": "",
+    "Defense": "",
+    "Text": "Aparición en juego: Crea una ficha insecto 1/1 con \"Derrotado: Envenena la unidad objetivo\". 1 de oro y Destruir: Drena 1."
+  },
+  {
+    "Name": "FELINO DE LA MONTAÑA",
+    "Cost": "2",
+    "Attack": "1",
+    "Defense": "1",
+    "Text": "Sorpresivo. Aparición en juego: Pon dos contadores +1/+1 repartidos entre una o dos unidades objetivo."
+  },
+  {
+    "Name": "GATITOS DE BRUJA",
+    "Cost": "1",
+    "Attack": "1",
+    "Defense": "1",
+    "Text": "Sorpresivo. Aparición en juego: Si controlas otra bruja o animal, interrumpe la orden de acción objetivo de coste 2 o menos."
+  },
+  {
+    "Name": "HECHICERA ELEMENTAL",
+    "Cost": "2",
+    "Attack": "2",
+    "Defense": "3",
+    "Text": "Siempre que juegues una orden, hace 1 punto de daño a los  oponentes."
+  },
+  {
+    "Name": "LIDER DE LA MANADA",
+    "Cost": "2",
+    "Attack": "3",
+    "Defense": "3",
+    "Text": "Ataca cada turno si puede. Siempre que ataque, lucha con la unidad rival objetivo, luego pierdes vidas igual al daño recibido de esta forma."
+  },
+  {
+    "Name": "MUERTE INMINENTE",
+    "Cost": "1",
+    "Attack": "",
+    "Defense": "",
+    "Text": "Como coste adicional, pierdes 2 vidas. Destruye la unidad objetivo de fuerza 3 o menos."
+  },
+  {
+    "Name": "NICOL, LA APRENDIZ",
+    "Cost": "2",
+    "Attack": "1",
+    "Defense": "2",
+    "Text": "Aparición en juego: El jugador objetivo muestra su mano. Eliges una carta de acción. Ese jugador descarta esa carta."
+  },
+  {
+    "Name": "PLANES FRUSTRADOS",
+    "Cost": "2",
+    "Attack": "",
+    "Defense": "",
+    "Text": "Interrumpe la orden objetivo."
+  },
+  {
+    "Name": "RITUAL DE NEGACION",
+    "Cost": "1",
+    "Attack": "",
+    "Defense": "",
+    "Text": "Como coste adicional descarta una carta. Elige 1: - Cancela el efecto en juego objetivo. - Interrumpe la orden de acción o unidad objetivo de coste 3 o menos."
+  },
+  {
+    "Name": "ROJO FUGAZ",
+    "Cost": "1",
+    "Attack": "2",
+    "Defense": "2",
+    "Text": "Frenesí. (Esta unidad puede atacar el mismo turno que entra bajo tu control). Los animales que controlas ganan Frenesí."
+  },
+  {
+    "Name": "SOMBRA DEL DESIERTO",
+    "Cost": "2",
+    "Attack": "3",
+    "Defense": "3",
+    "Text": "Siempre que otra unidad entre al campo de batalla bajo tu control, el jugador objetivo pierde 1 vida."
+  },
+  {
+    "Name": "TESORO GENERICO",
+    "Cost": "0",
+    "Attack": "",
+    "Defense": "",
+    "Text": "Agotar: Genera 1 oro."
+  }
+]

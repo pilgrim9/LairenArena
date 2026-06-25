@@ -5,5 +5,6 @@ public enum GameEvent
     OnSelfEntersBattlefield,
     OnAnotherCardEntersBattlefield,
     OnCardDefeated,
+    OnSelfAttacks,
     // Add other event types here
 }

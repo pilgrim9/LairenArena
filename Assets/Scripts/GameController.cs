@@ -358,15 +358,42 @@ public class GameController : NetworkBehaviour
             {
                 if (Costs.CostResolvers.TryGetValue(cost, out var resolver))
                 {
-                    yield return resolver(player);
+                    yield return resolver(player, card);
                 }
             }
 
             var requiredTargets = new Queue<TargetInfo>();
 
-            foreach (var ability in card.Abilities)
+            var ability = stackable.getAbility();
+            
+            // Check for Modes
+            if (ability != null && ability.Modes != null && ability.Modes.Count > 0)
             {
-                foreach (var effect in ability.Effects)
+                gameState.state = State.AwaitingModeSelection;
+                gameState.ModeDescriptions = ability.Modes.Select(m => m.Description).ToList();
+                player.selectedMode = -1;
+                player.TargetsCancelled = false;
+                
+                yield return new WaitUntil(() => player.selectedMode != -1 || player.TargetsCancelled);
+                
+                if (player.TargetsCancelled)
+                {
+                    gameState.state = State.InProgress;
+                    gameState.ModeDescriptions.Clear();
+                    if (stackable.IsCard()) yield return MoveCard(stackable.InGameId, Zone.Discard);
+                    yield break;
+                }
+                
+                // Set the ability's effects to the chosen mode's effects
+                ability.Effects = ability.Modes[player.selectedMode].Effects;
+                
+                gameState.state = State.InProgress;
+                gameState.ModeDescriptions.Clear();
+            }
+
+            foreach (var a in card.Abilities)
+            {
+                foreach (var effect in a.Effects)
                 {
                     if (effect.ValidTargets != null)
                     {
@@ -476,11 +503,72 @@ public class GameController : NetworkBehaviour
                     bool isSelfTrigger = sourceCardId != -1 && card.InGameId == sourceCardId && ability.Trigger == GameEvent.OnSelfEntersBattlefield;
                     bool isOtherTrigger = sourceCardId != -1 && card.InGameId != sourceCardId && ability.Trigger == GameEvent.OnAnotherCardEntersBattlefield;
 
-                    if (eventMatches || isSelfTrigger || isOtherTrigger)
+                    bool shouldTrigger = false;
+                    
+                    if (ability.Trigger == GameEvent.OnSelfEntersBattlefield) {
+                        shouldTrigger = isSelfTrigger;
+                    } 
+                    else if (ability.Trigger == GameEvent.OnAnotherCardEntersBattlefield) {
+                        shouldTrigger = isOtherTrigger;
+                        if (card.currentZone != Zone.Regroup) shouldTrigger = false;
+                    }
+                    else if (ability.Trigger == GameEvent.OnOrderPlayed) {
+                         shouldTrigger = eventMatches;
+                         if (card.Types.Contains(CardTypes.ALLY) && card.currentZone != Zone.Regroup) shouldTrigger = false;
+                    }
+                    else if (ability.Trigger == GameEvent.OnCardDefeated) {
+                         shouldTrigger = eventMatches;
+                    }
+                    else {
+                        shouldTrigger = eventMatches;
+                    }
+
+                    if (shouldTrigger)
                     {
-                        var triggeredAbility = ability;
-                        triggeredAbility.SourceCardInGameId = card.InGameId;
-                        gameState.TheStack.Add(new StackItem(triggeredAbility));
+                        bool conditionsMet = true;
+                        
+                        if (ability.TriggerRequiresCardTypes != null && ability.TriggerRequiresCardTypes.Count > 0 && sourceCardId != -1)
+                        {
+                            Card sourceCard = Cards.getCardFromID(sourceCardId);
+                            bool typeMatch = ability.TriggerRequiresCardTypes.Any(reqType => sourceCard.Types.Contains(reqType));
+                            if (!typeMatch) conditionsMet = false;
+                        }
+
+                        if (ability.TriggerRequiresSameController && sourceCardId != -1)
+                        {
+                            Card sourceCard = Cards.getCardFromID(sourceCardId);
+                            if (sourceCard.Owner != card.Owner)
+                            {
+                                conditionsMet = false;
+                            }
+                        }
+
+                        if (ability.TriggerCondition != null)
+                        {
+                            var cond = ability.TriggerCondition;
+                            var owner = card.getOwner();
+                            int count = 0;
+                            foreach (var id in owner.Regroup)
+                            {
+                                if (cond.ExcludeSelf && id == card.InGameId) continue;
+                                var otherCard = Cards.getCardFromID(id);
+                                if (cond.RequiresControlledSubtypes != null && cond.RequiresControlledSubtypes.Any(st => otherCard.Subtypes.Contains(st)))
+                                {
+                                    count++;
+                                }
+                            }
+                            if (count < cond.MinCount)
+                            {
+                                conditionsMet = false;
+                            }
+                        }
+
+                        if (conditionsMet)
+                        {
+                            var triggeredAbility = ability;
+                            triggeredAbility.SourceCardInGameId = card.InGameId;
+                            gameState.TheStack.Add(new StackItem(triggeredAbility));
+                        }
                     }
                 }
             }
@@ -559,8 +647,44 @@ public class GameController : NetworkBehaviour
 
     private IEnumerator UpdateStateBasedEffects()
     {
-        // layer effects an other rule problems go here
+        // Reset granted modifiers
+        foreach (var card in gameState.cards)
+        {
+            card.GrantedKeywords.Clear();
+        }
+
+        // Apply continuous effects
+        foreach (var sourceCard in gameState.cards)
+        {
+            if (sourceCard.currentZone == Zone.Regroup)
+            {
+                foreach (var ability in sourceCard.Abilities)
+                {
+                    if (ability.IsContinuous)
+                    {
+                        foreach (var effect in ability.Effects)
+                        {
+                            if (effect.Type == Abilities.EffectType.GrantKeyword && effect.ValidTargets != null)
+                            {
+                                foreach (var targetCard in gameState.cards)
+                                {
+                                    if (effect.ValidTargets.IsValidTarget(targetCard.InGameId, sourceCard.getOwner()))
+                                    {
+                                        if (!targetCard.GrantedKeywords.Contains(effect.Keyword))
+                                        {
+                                            targetCard.GrantedKeywords.Add(effect.Keyword);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         yield return null;
+
         // players win or lose
         foreach (Player player in gameState.Players)
         {
@@ -590,6 +714,21 @@ public class GameController : NetworkBehaviour
         foreach (var player in gameState.Players)
         {
             player.HasPassedPriority = false;
+        }
+    }
+
+    public void RemoveFromStack(int stackIndex)
+    {
+        if (stackIndex >= 0 && stackIndex < gameState.TheStack.Count)
+        {
+            var stackItem = gameState.TheStack[stackIndex];
+            gameState.TheStack.RemoveAt(stackIndex);
+            
+            // Move card to discard if it was a card spell
+            if (stackItem.stackable.IsCard())
+            {
+                StartCoroutine(MoveCard(stackItem.card, Zone.Discard));
+            }
         }
     }
 
@@ -869,6 +1008,26 @@ public class GameController : NetworkBehaviour
             }
             yield return Propagate();
         } 
+        
+        // Force attack for MustAttack
+        var mustAttackCards = gameState.GetActivePlayer().Regroup
+            .Where(id => Cards.getCardFromID(id).Keywords.Contains(Keyword.MustAttack))
+            .ToList();
+            
+        foreach (var id in mustAttackCards)
+        {
+            var card = Cards.getCardFromID(id);
+            if (card.currentZone == Zone.Regroup && (!card.SummoningSickness || card.Keywords.Contains(Keyword.Frenzy)))
+            {
+                yield return MoveCard(id, Zone.Attackers);
+            }
+        }
+        
+        // Fire OnSelfAttacks for all declared attackers
+        foreach (var id in gameState.GetActivePlayer().Attackers)
+        {
+            FireEvent(GameEvent.OnSelfAttacks, id);
+        }
     }
 
     private bool assignedABlocker() => (gameState.GetInActivePlayer().wantsToBlockWith != -1 && gameState.GetInActivePlayer().wantsToBlockTarget != -1);

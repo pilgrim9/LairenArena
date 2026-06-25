@@ -57,14 +57,16 @@ public static class Cards
         private List<Keyword> _keywords = new();
         public List<Keyword> Keywords
         {
-            get { return _keywords.Concat(TemporaryKeywords).ToList(); }
+            get { return _keywords.Concat(TemporaryKeywords).Concat(GrantedKeywords).ToList(); }
             set { _keywords = value; }
         }
         public List<Keyword> TemporaryKeywords = new();
+        public List<Keyword> GrantedKeywords = new();
         public int Damage = 0;
         public bool SummoningSickness = true;
         public List<int> Blockers = new();
         public List<Abilities.Ability> Abilities = new();
+        public List<global::Abilities.ActivatedAbility> ActivatedAbilities = new();
         public List<string> AdditionalCosts = new();
         public int BlockingAttacker = -1;
 
@@ -78,7 +80,6 @@ public static class Cards
         public Zone currentZone;
         public List<Zone> PlayableFrom = new() { Zone.Hand };
         public int controller;
-        public List<Keyword> GrantedKeywords;
 
         public bool CanBePlayedFrom(Zone zone)
         {
@@ -113,6 +114,17 @@ public static class Cards
         }
     }
 
+    public static Card INSECTO_TOKEN = new() {
+        Name = "INSECTO (TOKEN)",
+        Types = new List<string> { CardTypes.ALLY },
+        Subtypes = new List<string> { CreatureTypes.INSECTO },
+        Power = 1,
+        Resistance = 1,
+        Cost = 0,
+        // TODO: Poison keyword not implemented yet, so we omit it for now
+        // Keywords = new List<Keyword> { Keyword.Poison }
+    };
+
     public static Card TreasureGenerico = new() {
         Name = "TESORO GENERICO",
         Types = new List<string> { CardTypes.TREASURE },
@@ -141,7 +153,6 @@ public static class Cards
         Name = "HECHICERA ELEMENTAL",
         Types = new List<string> {CardTypes.ALLY},
         Subtypes = new List<string> {CreatureTypes.BRUJA},
-        Supertypes = new List<string> {Supertypes.ROYALTY},
         Power = 2,
         Resistance = 3,
         Cost = 2,
@@ -151,8 +162,8 @@ public static class Cards
         Name = "ANCIANA MAESTRA",
         Types = new List<string> {CardTypes.ALLY},
         Subtypes = new List<string> {CreatureTypes.BRUJA},
-        Power = 3,
-        Resistance = 4,
+        Power = 4,
+        Resistance = 6,
         Cost = 5,
         Abilities = new List<Abilities.Ability> {Abilities.AllAbilities["AncianaMaestra"]},
     };
@@ -160,11 +171,14 @@ public static class Cards
         Name = "CUMULO DE HONGOS",
         Types = new List<string> {CardTypes.MONUMENT},
         Cost = 1,
+        Abilities = new List<Abilities.Ability> {Abilities.AllAbilities["CumuloDeHongosEnters"]},
+        ActivatedAbilities = new List<global::Abilities.ActivatedAbility> {global::Abilities.AllActivatedAbilities["CumuloDeHongosActivated"]},
     };
     public static Card CIUDAD_EN_LLAMAS = new(){
         Name = "CIUDAD EN LLAMAS",
         Types = new List<string> {CardTypes.ORDER, CardTypes.FAST},
         Cost = 3,
+        Abilities = new List<Abilities.Ability> {Abilities.AllAbilities["CiudadEnLlamas"]},
     };
     
     public static Card MUERTE_INMINENTE = new(){
@@ -178,12 +192,14 @@ public static class Cards
         Name = "PLANES FRUSTRADOS",
         Types = new List<string> {CardTypes.ORDER, CardTypes.FAST},
         Cost = 2,
+        Abilities = new List<Abilities.Ability> {Abilities.AllAbilities["PlanesFrustrados"]},
     };
     public static Card RITUAL_DE_NEGACION = new(){
         Name = "RITUAL DE NEGACION",
         Types = new List<string> {CardTypes.ORDER},
         Cost = 1,
-        // AdditionalCosts = new List<string> {Costs.discardACard}
+        AdditionalCosts = new List<string> {Costs.discardACard},
+        Abilities = new List<Abilities.Ability> {Abilities.AllAbilities["RitualDeNegacion"]},
     };
     public static Card LIDER_DE_LA_MANADA = new(){
         Name = "LIDER DE LA MANADA",
@@ -192,10 +208,11 @@ public static class Cards
         Power = 3,
         Resistance = 3,
         Cost = 2,
+        Abilities = new List<Abilities.Ability> {Abilities.AllAbilities["LiderDeLaManadaStatic"], Abilities.AllAbilities["LiderDeLaManadaTrigger"]},
     };
     public static Card FELINO_DE_LA_MONTANA = new(){
         Name = "FELINO DE LA MONTAÑA",
-        Types = new List<string> {CardTypes.ALLY},
+        Types = new List<string> {CardTypes.ALLY, CardTypes.FAST},
         Subtypes = new List<string> {CreatureTypes.ANIMAL},
         Power = 1,
         Resistance = 1,
@@ -204,11 +221,12 @@ public static class Cards
     };
     public static Card GATITOS_DE_BRUJA = new(){
         Name = "GATITOS DE BRUJA",
-        Types = new List<string> {CardTypes.ALLY},
+        Types = new List<string> {CardTypes.ALLY, CardTypes.FAST},
         Subtypes = new List<string> {CreatureTypes.ANIMAL, CreatureTypes.BRUJA},
         Power = 1,
         Resistance = 1,
         Cost = 1,
+        Abilities = new List<Abilities.Ability> {Abilities.AllAbilities["GatitosDeBrujaTrigger"]},
     };
     public static Card CASCABUFALO = new(){
         Name = "CASCABUFALO",
@@ -218,6 +236,7 @@ public static class Cards
         Resistance = 2,
         Cost = 1,
         Abilities = new List<Abilities.Ability> {Abilities.AllAbilities["Cascabufalo"]},
+        ActivatedAbilities = new List<global::Abilities.ActivatedAbility> {global::Abilities.AllActivatedAbilities["CascabufaloActivated"]},
     };
     public static Card NICOL_LA_APRENDIZ = new(){
         Name = "NICOL, LA APRENDIZ",
@@ -226,5 +245,6 @@ public static class Cards
         Power = 1,
         Resistance = 2,
         Cost = 2,
+        Abilities = new List<Abilities.Ability> {Abilities.AllAbilities["NicolLaAprendizTrigger"]},
     };
 }
