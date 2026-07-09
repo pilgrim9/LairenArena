@@ -33,7 +33,7 @@ public class CardStackView : MonoBehaviour, IPointerClickHandler
     {
         GameController.instance.GameStateUpdated += UpdateView;
         Debug.Log("Started CardStackView " + zone + " " + GetPlayer());
-    }
+    } 
     
     void UpdateView(GameState old, GameState _new)
     {
@@ -65,7 +65,12 @@ public class CardStackView : MonoBehaviour, IPointerClickHandler
             }
             Cards.Card card = Cards.getCardFromID(cardList[i]);
             view.cardData = card;
-            if (IsHidden) view.Hide(); 
+            bool shouldHide = IsHidden;
+            if (zone == Zone.Hand && !isOwner && _new.state == State.AwaitingCardSelection)
+            {
+                shouldHide = false;
+            }
+            if (shouldHide) view.Hide(); 
             else view.Show();
             view.UpdateView(old, _new);
 

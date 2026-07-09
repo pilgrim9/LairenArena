@@ -1,4 +1,4 @@
-﻿using Mirror;
+using Mirror;
 using StackObjects;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -86,6 +86,24 @@ public class RPCManager : NetworkBehaviour
     public void RpcSelectTarget(int card, int playerId)
     {
         GameController.instance.gameState.Players[playerId].wantsToTarget = card;
+    }
+
+    [Command(requiresAuthority = false)]
+    public void RpcSelectDiscard(int card, int playerId)
+    {
+        GameController.instance.gameState.Players[playerId].wantsToDiscard = card;
+    }
+
+    [Command(requiresAuthority = false)]
+    public void RpcSelectFromRevealedHand(int card, int playerId)
+    {
+        GameController.instance.gameState.Players[playerId].wantsToTarget = card; // Reuse wantsToTarget for the selection
+    }
+
+    [Command(requiresAuthority = false)]
+    public void RpcSelectMode(int modeIndex, int playerId)
+    {
+        GameController.instance.gameState.Players[playerId].selectedMode = modeIndex;
     }
 
     [Command(requiresAuthority = false)]

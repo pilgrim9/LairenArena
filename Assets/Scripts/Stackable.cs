@@ -14,6 +14,7 @@ namespace StackObjects
     public abstract class Stackable
     {
         public int InGameId = -1;
+        public int SourceCardInGameId = -1;
         protected int RelatedCard = -1;
         public virtual int GetRelatedCard() { return RelatedCard; }
         public string Name = "";
@@ -21,7 +22,7 @@ namespace StackObjects
 
         public int Owner = -1;
         public int Caster = -1;
-        public List<int> Targets = new();
+        [NonSerialized] public List<Dictionary<int, int>> AllTargets = new();
         public bool IsCard()
         {
             return typeof(Cards.Card) == GetType();

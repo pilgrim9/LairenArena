@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Resources;
 using Mirror;
@@ -8,7 +8,9 @@ public enum State
     WaitingForPlayers,
     InProgress,
     AwaitingPayment,
-    AwaitingTarget
+    AwaitingTarget,
+    AwaitingCardSelection,
+    AwaitingModeSelection
 }
 
 [Serializable]
@@ -27,6 +29,9 @@ public class GameState
     public int winner;
     [NonSerialized]
     public TargetInfo CurrentTargetInfo;
+    public List<int> RevealedHand = new();
+    public List<string> RevealedHandFilter = new();
+    public List<string> ModeDescriptions = new();
 
     public StackItem PopStack()
     {
